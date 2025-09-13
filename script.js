@@ -1,19 +1,50 @@
-// Product Rendering
+let products = [];
+let selectedCategory = "All";
+let compareList = new Set();
+
+const productsContainer = document.getElementById("productsContainer");
+const compareTable = document.getElementById("compareTable");
+const clearCompareBtn = document.getElementById("clearCompareBtn");
+const searchInput = document.getElementById("searchInput");
+
+// Fetch products
+fetch("products.json")
+  .then(res => res.json())
+  .then(data => {
+    products = data;
+    renderCategories();
+    renderProducts(products);
+  });
+
+// Render categories
+function renderCategories() {
+  const categoriesNav = document.querySelector(".categories-nav");
+  const categories = ["All", ...new Set(products.map(p => p.category))];
+  categoriesNav.innerHTML = "";
+  categories.forEach(cat => {
+    const btn = document.createElement("button");
+    btn.textContent = cat;
+    btn.className = cat === selectedCategory ? "active" : "";
+    btn.addEventListener("click", () => {
+      selectedCategory = cat;
+      document.querySelectorAll(".categories-nav button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      filterProducts();
+    });
+    categoriesNav.appendChild(btn);
+  });
+}
+
+// Render products
 function renderProducts(productList) {
-  if (selectedCategory === "All" && !searchInput.value.trim()) {
-    renderAllCategoriesHorizontal();
-    return;
-  }
   productsContainer.innerHTML = "";
   if (productList.length === 0) {
     productsContainer.innerHTML = '<p style="text-align:center;color:#777;">No products found.</p>';
     return;
   }
-  productList.forEach((prod) => {
+  productList.forEach(prod => {
     const card = document.createElement("article");
     card.className = "product-card";
-    card.tabIndex = 0;
-    const isCompared = compareList.has(prod.id);
     card.innerHTML = `
       <img src="${prod.image}" alt="${prod.name}" class="product-image" loading="lazy" />
       <div class="product-content">
@@ -21,9 +52,7 @@ function renderProducts(productList) {
         <p class="product-price">₹${prod.price.toLocaleString()}</p>
         <p class="product-description">${prod.description}</p>
         <p class="product-rating">Rating: ${prod.rating} ★</p>
-        <button class="compare-btn" aria-pressed="${isCompared}" aria-label="${isCompared ? 'Remove from Compare' : 'Add to Compare'}">
-          ${isCompared ? 'Remove from Compare' : 'Add to Compare'}
-        </button>
+        <button class="compare-btn">${compareList.has(prod.id) ? "Remove from Compare" : "Add to Compare"}</button>
       </div>
     `;
     const btn = card.querySelector(".compare-btn");
@@ -31,8 +60,6 @@ function renderProducts(productList) {
       if (compareList.has(prod.id)) {
         compareList.delete(prod.id);
         btn.textContent = "Add to Compare";
-        btn.setAttribute("aria-pressed", "false");
-        btn.setAttribute("aria-label", "Add to Compare");
       } else {
         if (compareList.size >= 3) {
           alert("You can only compare up to 3 products.");
@@ -40,8 +67,6 @@ function renderProducts(productList) {
         }
         compareList.add(prod.id);
         btn.textContent = "Remove from Compare";
-        btn.setAttribute("aria-pressed", "true");
-        btn.setAttribute("aria-label", "Remove from Compare");
       }
       renderCompareTable();
     });
@@ -49,101 +74,47 @@ function renderProducts(productList) {
   });
 }
 
-// Render Horizontal Rows per Category
-function renderAllCategoriesHorizontal() {
-  productsContainer.innerHTML = "";
-  const categories = [...new Set(products.map(p => p.category))];
-  categories.forEach(category => {
-    const heading = document.createElement("h2");
-    heading.textContent = category;
-    heading.style.margin = "1em 0 0.5em 0";
-    heading.style.fontSize = "1.2rem";
-    heading.style.fontWeight = "600";
-    productsContainer.appendChild(heading);
+// Filter products
+function filterProducts() {
+  let list = products;
+  if (selectedCategory !== "All") {
+    list = list.filter(p => p.category === selectedCategory);
+  }
+  if (searchInput.value.trim()) {
+    list = list.filter(p => p.name.toLowerCase().includes(searchInput.value.toLowerCase()));
+  }
+  renderProducts(list);
+}
 
-    const row = document.createElement("div");
-    row.className = "horizontal-scroll-row";
+searchInput.addEventListener("input", filterProducts);
 
-    products.filter(p => p.category === category).forEach(prod => {
-      const card = document.createElement("article");
-      card.className = "product-card";
-      card.tabIndex = 0;
-      card.style.minWidth = "240px";
-      card.style.maxWidth = "240px";
+// Render compare table
+function renderCompareTable() {
+  compareTable.innerHTML = "";
+  if (compareList.size === 0) return;
+  const selectedProducts = products.filter(p => compareList.has(p.id));
+  const headers = ["Name", "Price", "Description", "Rating"];
+  const thead = document.createElement("thead");
+  const headerRow = document.createElement("tr");
+  headerRow.innerHTML = `<th>Feature</th>` + selectedProducts.map(p => `<th>${p.name}</th>`).join("");
+  thead.appendChild(headerRow);
+  compareTable.appendChild(thead);
 
-      const isCompared = compareList.has(prod.id);
-      card.innerHTML = `
-        <img src="${prod.image}" alt="${prod.name}" class="product-image" loading="lazy" />
-        <div class="product-content">
-          <h3 class="product-name">${prod.name}</h3>
-          <p class="product-price">₹${prod.price.toLocaleString()}</p>
-          <p class="product-description">${prod.description}</p>
-          <p class="product-rating">Rating: ${prod.rating} ★</p>
-          <button class="compare-btn" aria-pressed="${isCompared}" aria-label="${isCompared ? 'Remove from Compare' : 'Add to Compare'}">
-            ${isCompared ? 'Remove from Compare' : 'Add to Compare'}
-          </button>
-        </div>
-      `;
-      const btn = card.querySelector(".compare-btn");
-      btn.addEventListener("click", () => {
-        if (compareList.has(prod.id)) {
-          compareList.delete(prod.id);
-          btn.textContent = "Add to Compare";
-          btn.setAttribute("aria-pressed", "false");
-          btn.setAttribute("aria-label", "Add to Compare");
-        } else {
-          if (compareList.size >= 3) {
-            alert("You can only compare up to 3 products.");
-            return;
-          }
-          compareList.add(prod.id);
-          btn.textContent = "Remove from Compare";
-          btn.setAttribute("aria-pressed", "true");
-          btn.setAttribute("aria-label", "Remove from Compare");
-        }
-        renderCompareTable();
-      });
-      row.appendChild(card);
-    });
-    productsContainer.appendChild(row);
+  const tbody = document.createElement("tbody");
+  headers.slice(1).forEach((field, i) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td>${field}</td>` + selectedProducts.map(p => {
+      if (i === 0) return `<td>₹${p.price.toLocaleString()}</td>`;
+      if (i === 1) return `<td>${p.description}</td>`;
+      if (i === 2) return `<td>${p.rating} ★</td>`;
+    }).join("");
+    tbody.appendChild(row);
   });
+  compareTable.appendChild(tbody);
 }
 
-// Newsletter Popup
-document.querySelector("#newsletterForm")?.addEventListener("submit", function(e) {
-  e.preventDefault();
-  const contactInput = document.querySelector("#contactInput");
-  const value = contactInput.value.trim();
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const mobileRegex = /^[6-9]\d{9}$/;
-
-  if (emailRegex.test(value)) {
-    showPopup(value, "email");
-  } else if (mobileRegex.test(value)) {
-    showPopup(value, "mobile number");
-  } else {
-    alert("Please enter a valid email or 10 digit mobile number.");
-    contactInput.focus();
-    return;
-  }
-
-  this.reset();
-});
-
-function showPopup(value, type) {
-  const modal = document.querySelector("#customModal");
-  const msg = document.querySelector("#customModalMsg");
-  msg.innerHTML = `You have successfully subscribed with your <b>${type}</b>:<br>${value}`;
-  modal.style.display = "flex";
-}
-
-document.querySelector("#closeModalBtn").addEventListener("click", () => {
-  document.querySelector("#customModal").style.display = "none";
-});
-
-window.addEventListener("click", (e) => {
-  const modal = document.querySelector("#customModal");
-  if (e.target === modal) {
-    modal.style.display = "none";
-  }
+clearCompareBtn.addEventListener("click", () => {
+  compareList.clear();
+  renderCompareTable();
+  document.querySelectorAll(".compare-btn").forEach(btn => btn.textContent = "Add to Compare");
 });
