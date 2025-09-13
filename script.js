@@ -1,142 +1,88 @@
 let products = [];
-let selectedCategory = "All";
-let compareList = new Set();
+let compareList = [];
 
-const productsContainer = document.getElementById("productsContainer");
-const compareTable = document.getElementById("compareTable");
-const clearCompareBtn = document.getElementById("clearCompareBtn");
-const searchInput = document.getElementById("searchInput");
-
-// Fetch products.json
+// Load products.json
 fetch("products.json")
   .then(res => res.json())
   .then(data => {
     products = data;
-    renderCategories();
-    filterProducts();
-  });
+    renderProducts(products);
+  })
+  .catch(err => console.error("Error loading products.json:", err));
 
-// Render categories
-function renderCategories() {
-  const categoriesNav = document.querySelector(".categories-nav");
-  const categories = ["All", ...new Set(products.map(p => p.category))];
-  categoriesNav.innerHTML = "";
+// Render products on page
+function renderProducts(items) {
+  const container = document.getElementById("product-list");
+  container.innerHTML = "";
 
-  categories.forEach(cat => {
-    const btn = document.createElement("button");
-    btn.textContent = cat;
-    btn.className = cat === selectedCategory ? "active" : "";
-    btn.addEventListener("click", () => {
-      selectedCategory = cat;
-      document.querySelectorAll(".categories-nav button").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      filterProducts();
-    });
-    categoriesNav.appendChild(btn);
-  });
-}
-
-// Render product grid
-function renderProducts(productList) {
-  productsContainer.innerHTML = "";
-
-  if (productList.length === 0) {
-    productsContainer.innerHTML = '<p style="text-align:center;color:#777;">No products found.</p>';
+  if (items.length === 0) {
+    container.innerHTML = "<p>No products found.</p>";
     return;
   }
 
-  productList.forEach(prod => {
-    const card = document.createElement("article");
+  items.forEach(p => {
+    const card = document.createElement("div");
     card.className = "product-card";
     card.innerHTML = `
-      <img src="${prod.image}" alt="${prod.name}" class="product-image" loading="lazy" />
-      <div class="product-content">
-        <h3 class="product-name">${prod.name}</h3>
-        <p class="product-price">₹${prod.price.toLocaleString()}</p>
-        <p class="product-description">${prod.description}</p>
-        <p class="product-rating">Rating: ${prod.rating} ★</p>
-        <button class="compare-btn">${compareList.has(prod.id) ? "Remove from Compare" : "Add to Compare"}</button>
-      </div>
+      <img src="${p.image}" alt="${p.name}">
+      <h3>${p.name}</h3>
+      <p>${p.description}</p>
+      <p><strong>Price:</strong> ₹${p.price}</p>
+      <button onclick="toggleCompare('${p.id}')">
+        ${compareList.includes(p.id) ? "Remove from Compare" : "Add to Compare"}
+      </button>
     `;
-
-    // Compare button
-    const btn = card.querySelector(".compare-btn");
-    btn.addEventListener("click", () => {
-      if (compareList.has(prod.id)) {
-        compareList.delete(prod.id);
-        btn.textContent = "Add to Compare";
-      } else {
-        if (compareList.size >= 3) {
-          alert("You can only compare up to 3 products.");
-          return;
-        }
-        compareList.add(prod.id);
-        btn.textContent = "Remove from Compare";
-      }
-      renderCompareTable();
-    });
-
-    productsContainer.appendChild(card);
+    container.appendChild(card);
   });
 }
 
-// Filter products
-function filterProducts() {
-  let list = products;
-
-  if (selectedCategory !== "All") {
-    list = list.filter(p => p.category === selectedCategory);
-  }
-
-  if (searchInput.value.trim()) {
-    list = list.filter(p =>
-      p.name.toLowerCase().includes(searchInput.value.toLowerCase())
-    );
-  }
-
-  renderProducts(list);
-}
-
-searchInput.addEventListener("input", filterProducts);
-
-// Render compare table
-function renderCompareTable() {
-  compareTable.innerHTML = "";
-  if (compareList.size === 0) return;
-
-  const selectedProducts = products.filter(p => compareList.has(p.id));
-  const headers = ["Feature", ...selectedProducts.map(p => p.name)];
-
-  // Header row
-  const thead = document.createElement("thead");
-  const headerRow = document.createElement("tr");
-  headers.forEach(h => {
-    const th = document.createElement("th");
-    th.textContent = h;
-    headerRow.appendChild(th);
-  });
-  thead.appendChild(headerRow);
-  compareTable.appendChild(thead);
-
-  // Body rows
-  const tbody = document.createElement("tbody");
-  const fields = ["Price", "Description", "Rating"];
-  fields.forEach(field => {
-    const row = document.createElement("tr");
-    row.innerHTML = `<td>${field}</td>` +
-      selectedProducts.map(p => {
-        if (field === "Price") return `<td>₹${p.price.toLocaleString()}</td>`;
-        if (field === "Description") return `<td>${p.description}</td>`;
-        if (field === "Rating") return `<td>${p.rating} ★</td>`;
-      }).join("");
-    tbody.appendChild(row);
-  });
-  compareTable.appendChild(tbody);
-}
-
-// Clear compare
-clearCompareBtn.addEventListener("click", () => {
-  compareList.clear();
-  renderCompareTable();
-  document.querySelectorAll(".compare-btn").forEach(btn => btn.textContent = "Add to Compare");
+// Search products
+document.getElementById("searchInput").addEventListener("input", e => {
+  const term = e.target.value.toLowerCase();
+  const filtered = products.filter(p =>
+    p.name.toLowerCase().includes(term) ||
+    p.description.toLowerCase().includes(term)
+  );
+  renderProducts(filtered);
 });
+
+// Compare feature
+function toggleCompare(id) {
+  if (compareList.includes(id)) {
+    compareList = compareList.filter(pid => pid !== id);
+  } else {
+    compareList.push(id);
+  }
+  renderProducts(products);
+  renderComparison();
+}
+
+function renderComparison() {
+  const table = document.getElementById("comparison-table");
+  table.innerHTML = "";
+
+  if (compareList.length === 0) {
+    table.innerHTML = "<p>No products selected for comparison.</p>";
+    return;
+  }
+
+  const selected = products.filter(p => compareList.includes(p.id));
+
+  let header = "<tr><th>Name</th><th>Price</th><th>Stock</th><th>Rating</th></tr>";
+  let rows = selected.map(p =>
+    `<tr>
+       <td>${p.name}</td>
+       <td>₹${p.price}</td>
+       <td>${p.stock}</td>
+       <td>${p.rating}</td>
+     </tr>`
+  ).join("");
+
+  table.innerHTML = header + rows;
+}
+
+function clearComparison() {
+  compareList = [];
+  renderProducts(products);
+  renderComparison();
+}
