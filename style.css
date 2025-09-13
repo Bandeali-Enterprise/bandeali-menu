@@ -227,14 +227,16 @@ h1 .line2 {
 .clear-compare-btn:focus {
   background-color: #990000;
 }
-/* Footer */
+
+/* Footer - Red background, big icons, Follow us */
 footer {
-  background: #1563a1;
+  background: #d40000;
   color: white;
   padding: 2rem 1rem 1rem;
   font-size: 1rem;
   user-select: none;
 }
+
 .footer-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -243,6 +245,7 @@ footer {
   gap: 2rem;
   justify-content: space-between;
 }
+
 .footer-col {
   flex: 1 1 220px;
   min-width: 210px;
@@ -250,19 +253,33 @@ footer {
   flex-direction: column;
   gap: 0.6rem;
 }
+
 .footer-about h3 {
   font-size: 1.3rem;
   color: #fff;
   margin-bottom: 0.5rem;
 }
 .footer-about p, .footer-about strong, .footer-about a {
-  color: #cce5ff;
+  color: #ffd3d3;
   margin: 0.2rem 0;
 }
-.footer-social a img {
-  width: 28px;
-  height: 28px;
-  margin-top: 0.3rem;
+.footer-social-row {
+  display: flex;
+  align-items: center;
+  margin-top: 0.7rem;
+  gap: 1rem;
+}
+.footer-instagram-icon {
+  width: 40px;
+  height: 40px;
+  vertical-align: middle;
+  margin-right: 0.2rem;
+}
+.footer-follow-text {
+  font-size: 1.13rem;
+  font-weight: 600;
+  color: #fff6f6;
+  letter-spacing: 1px;
 }
 .footer-links h4,
 .footer-newsletter h4,
@@ -280,7 +297,7 @@ footer {
   margin-bottom: 0.4rem;
 }
 .footer-links ul li a {
-  color: #cce5ff;
+  color: #ffd3d3;
   text-decoration: none;
 }
 .footer-links ul li a:hover {
@@ -302,35 +319,41 @@ footer {
 }
 .footer-newsletter button {
   padding: 0.45rem 1.1rem;
-  background: #d40000;
-  color: white;
+  background: #fff;
+  color: #d40000;
   border: none;
   border-radius: 20px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: background 0.3s ease;
 }
 .footer-newsletter button:hover {
-  background: #a30000;
+  background: #ffecec;
 }
-/* Payment icons */
+
 .payment-icons {
   display: flex;
-  gap: 1rem;
+  gap: 1.2rem;
   align-items: center;
+  margin-top: 0.4rem;
 }
 .payment-icons img {
-  height: 32px;
+  height: 40px;
+  width: auto;
   user-select: none;
+  background: none;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08));
 }
+
 .footer-bottom {
   text-align: center;
-  color: #cce5ffcc;
-  font-size: 0.88rem;
+  color: #fff0e0;
+  font-size: 0.93rem;
   margin-top: 2rem;
   padding-top: 1rem;
-  border-top: 1px solid #2472b8;
+  border-top: 1px solid #ba0000;
 }
+
 /* Responsive behaviour */
 @media (max-width: 900px) {
   .footer-container {
@@ -349,17 +372,16 @@ footer {
     width: 100%;
   }
 }
-/* Responsive styles */
+
 @media (max-width: 599px) {
-  .logo, img.Logo {
-    height: 40px !important;
-    max-width: 100px !important;
+  .footer-instagram-icon {
+    width: 34px;
+    height: 34px;
   }
-  .red-bar {
-    height: 30px;
+  .footer-newsletter input[type="email"] {
+    font-size: 0.97rem;
   }
-  .red-bar span {
-    font-size: 0.9rem;
-    padding-left: 100%;
+  .payment-icons img {
+    height: 34px;
   }
 }
