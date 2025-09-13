@@ -14,6 +14,8 @@ body {
     flex-direction: column;
     min-height: 100vh;
 }
+
+/* Header */
 header {
     background: linear-gradient(135deg, #0077cc, #004f8c);
     color: white;
@@ -29,56 +31,18 @@ header {
     flex-wrap: wrap;
     margin-bottom: 1rem;
 }
-.logo {
-    height: 50px; /* base logo height */
-    width: auto;
+
+/* Logo */
+.logo, img.Logo {
+    max-height: 48px !important;
+    max-width: 130px !important;
+    height: 48px !important;
+    width: auto !important;
     object-fit: contain;
+    display: block;
 }
-/* Desktop / Laptop / Tablet Layout (width >= 600px) */
-@media (min-width: 600px) {
-    header {
-        padding: 1.5rem 2rem 2rem;
-    }
-    #searchInput {
-        max-width: 600px;
-    }
-    .header-content {
-        flex-wrap: nowrap;
-        justify-content: flex-start;
-    }
-    .logo {
-        height: 50px;
-        order: -1; /* Logo first */
-    }
-    h1 {
-        margin-left: 0.75rem;
-        order: 0;
-        font-size: 1.8rem;
-        user-select: none;
-    }
-    .products-container {
-        gap: 1.25rem;
-    }
-}
-/* Mobile Layout (width < 600px) */
-@media (max-width: 599px) {
-    .header-content {
-        flex-direction: column;
-        align-items: center;
-    }
-    .logo {
-        height: 40px; /* chhota logo */
-        margin-bottom: 0.25rem;
-        order: 0;
-    }
-    h1 {
-        order: 1;
-        font-size: 1.4rem;
-        text-align: center;
-        margin-left: 0;
-        user-select: none;
-    }
-}
+
+/* Categories navigation */
 .categories-nav {
     display: flex;
     flex-wrap: wrap;
@@ -104,6 +68,8 @@ header {
 .categories-nav button:hover {
     background-color: #005fa3;
 }
+
+/* Main content */
 main {
     flex-grow: 1;
     max-width: 1200px;
@@ -111,6 +77,8 @@ main {
     padding: 0 1rem;
     width: 100%;
 }
+
+/* Product cards */
 .products-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -162,7 +130,7 @@ main {
 }
 .product-rating {
     font-size: 1rem;
-    color: #f5a623; /* star gold color */
+    color: #f5a623;
 }
 .compare-btn {
     background-color: #0077cc;
@@ -179,6 +147,8 @@ main {
 .compare-btn:focus {
     background-color: #005fa3;
 }
+
+/* Compare section */
 .compare-section {
     margin-top: 2rem;
     background-color: white;
@@ -225,42 +195,21 @@ main {
     background-color: #990000;
 }
 
-/* Logo responsive size and positioning */
-.logo, img.Logo {
-    max-height: 48px;
-    max-width: 130px;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    display: block;
-}
-
-/* Mobile screen ke liye aur chhota aur logo ke neeche text */
-@media (max-width: 599px) {
-    .logo, img.Logo {
-        max-height: 34px;
-        max-width: 90px;
-        margin-bottom: 0.16rem;
-    }
-    .header-content {
-        flex-direction: column;
-        align-items: center;
-    }
-    h1 {
-        order: 1;
-        font-size: 1.4rem;
-        text-align: center;
-        margin-left: 0;
-        user-select: none;
-    }
-}
-
-/* Desktop/tablet ke liye logo text ke saath side by side */
+/* Desktop / Laptop / Tablet Layout */
 @media (min-width: 600px) {
+    header {
+        padding: 1.5rem 2rem 2rem;
+    }
     .header-content {
         flex-wrap: nowrap;
         justify-content: flex-start;
         align-items: center;
+    }
+    .logo, img.Logo {
+        height: 48px !important;
+        max-width: 130px !important;
+        order: -1;
+        margin-bottom: 0;
     }
     h1 {
         margin-left: 0.75rem;
@@ -268,10 +217,32 @@ main {
         font-size: 1.8rem;
         user-select: none;
     }
+    #searchInput {
+        max-width: 600px;
+    }
+    .products-container {
+        gap: 1.25rem;
+    }
+}
+
+/* Mobile Layout */
+@media (max-width: 599px) {
+    .header-content {
+        flex-direction: column;
+        align-items: center;
+    }
     .logo, img.Logo {
-        height: 48px;
-        max-width: 130px;
-        order: -1;
-        margin-bottom: 0;
+        max-height: 32px !important;
+        max-width: 90px !important;
+        height: 32px !important;
+        width: auto !important;
+        margin-bottom: 0.16rem;
+    }
+    h1 {
+        order: 1;
+        font-size: 1.4rem;
+        text-align: center;
+        margin-left: 0;
+        user-select: none;
     }
 }
