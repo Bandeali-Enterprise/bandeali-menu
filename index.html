@@ -77,7 +77,7 @@
   </div>
 </footer>
 
-<!-- Custom Popup Modal -->
+<!-- Popup Modal -->
 <div id="customModal" class="custom-modal">
   <div class="custom-modal-content">
     <span id="closeModalBtn" class="custom-modal-close">&times;</span>
@@ -89,79 +89,84 @@
 
 <!-- Floating Contact Buttons -->
 <div id="contactButtons">
-  <a href="https://wa.me/918237979782" class="whatsapp-btn" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">WhatsApp</a>
+  <a href="https://wa.me/918237979782" class="whatsapp-btn" target="_blank" rel="noopener" aria-label="Chat WhatsApp">WhatsApp</a>
   <a href="mailto:Bandealienterprises@gmail.com" class="email-btn" aria-label="Send Email">Email Us</a>
 </div>
 
 <script>
-  // Product data with categories
-  const products = [
-    {id:1, name:"iPhone 13 (128GB, Blue)", price:79999, description:"Apple iPhone 13 with 128GB, A15 Bionic chip.", image:"iphone13-blue.png", rating:4.5, category:"New Mobiles"},
-    {id:2, name:"Samsung Galaxy S21", price:69999, description:"Samsung Galaxy S21 with Dynamic AMOLED display.", image:"galaxy-s21.png", rating:4.2, category:"New Mobiles"},
-    {id:3, name:"Used OnePlus 8T", price:29999, description:"Used OnePlus 8T, good condition.", image:"oneplus-8t.png", rating:4.0, category:"Second Hand Mobiles"},
-    {id:4, name:"Mobile Protective Case", price:499, description:"Durable mobile case.", image:"mobile-case.png", rating:4.1, category:"Accessories"}
-  ];
-
+  let products = [];
   let selectedCategory = "All";
   let compareList = new Set();
 
-  // Initialize categories nav with All + unique categories
-  const categories = ["All", ...new Set(products.map(p=>p.category))];
-  const categoriesNav = document.querySelector(".categories-nav");
-  categoriesNav.innerHTML = "";
-  categories.forEach(cat => {
-    const btn = document.createElement("button");
-    btn.textContent = cat;
-    if(cat === selectedCategory) btn.classList.add("active");
-    btn.addEventListener("click", () => {
-      selectedCategory = cat;
-      updateCategoryActive();
-      renderProducts(filterProducts());
-      clearCompare();
-    });
-    categoriesNav.appendChild(btn);
-  });
+  async function loadProducts() {
+    try {
+      const res = await fetch('data/products.json');
+      products = await res.json();
+      initCategories();
+      renderProducts(products);
+      renderCompareTable();
+    } catch(err) {
+      console.error("Failed to load products.json:", err);
+    }
+  }
 
-  function updateCategoryActive() {
-    categoriesNav.querySelectorAll("button").forEach(btn => {
-      btn.classList.toggle("active", btn.textContent === selectedCategory);
+  function initCategories() {
+    const categoriesNav = document.querySelector(".categories-nav");
+    categoriesNav.innerHTML = '';
+    const categories = ["All", ...new Set(products.map(p => p.category))];
+    categories.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.textContent = cat;
+      if(cat === selectedCategory) btn.classList.add("active");
+      btn.addEventListener("click", () => {
+        selectedCategory = cat;
+        updateCategoryActive();
+        renderProducts(filterProducts());
+        clearCompare();
+      });
+      categoriesNav.appendChild(btn);
     });
   }
 
+  function updateCategoryActive() {
+    const buttons = document.querySelectorAll(".categories-nav button");
+    buttons.forEach(btn => btn.classList.toggle("active", btn.textContent === selectedCategory));
+  }
+
   function filterProducts() {
-    if (selectedCategory === "All") return products;
-    return products.filter(p=>p.category === selectedCategory);
+    if(selectedCategory === "All") return products;
+    return products.filter(p => p.category === selectedCategory);
   }
 
   function renderProducts(productList) {
     const container = document.getElementById("productsContainer");
-    container.innerHTML = "";
-    productList.forEach(product=>{
+    container.innerHTML = '';
+    productList.forEach(prod => {
       const card = document.createElement("div");
       card.className = "product-card";
-      const isCompared = compareList.has(product.id);
+      const isCompared = compareList.has(prod.id);
       card.innerHTML = `
-        <img src="images/${product.image}" alt="${product.name}" class="product-image"/>
+        <img src="images/${prod.image}" alt="${prod.name}" class="product-image" />
         <div class="product-content">
-          <h3 class="product-name">${product.name}</h3>
-          <p class="product-price">₹${product.price.toLocaleString()}</p>
-          <p class="product-description">${product.description}</p>
-          <p class="product-rating">Rating: ${product.rating} ★</p>
+          <h3 class="product-name">${prod.name}</h3>
+          <p class="product-price">₹${prod.price.toLocaleString()}</p>
+          <p class="product-description">${prod.description}</p>
+          <p class="product-rating">Rating: ${prod.rating} ★</p>
           <button class="compare-btn">${isCompared ? "Remove from Compare" : "Add to Compare"}</button>
         </div>
       `;
-      const compareBtn = card.querySelector(".compare-btn");
-      compareBtn.addEventListener("click", ()=>{
-        if(compareList.has(product.id)) {
-          compareList.delete(product.id);
-          compareBtn.textContent = "Add to Compare";
+      const btn = card.querySelector(".compare-btn");
+      btn.addEventListener("click", () => {
+        if(compareList.has(prod.id)) {
+          compareList.delete(prod.id);
+          btn.textContent = "Add to Compare";
         } else {
           if(compareList.size >= 3) {
             alert("You can only compare up to 3 products.");
             return;
           }
-          compareList.add(product.id);
-          compareBtn.textContent = "Remove from Compare";
+          compareList.add(prod.id);
+          btn.textContent = "Remove from Compare";
         }
         renderCompareTable();
       });
@@ -171,13 +176,11 @@
 
   const compareTable = document.getElementById("compareTable");
   const clearCompareBtn = document.getElementById("clearCompareBtn");
-  clearCompareBtn.onclick = clearCompare;
-
-  function clearCompare() {
+  clearCompareBtn.addEventListener("click", () => {
     compareList.clear();
     renderProducts(filterProducts());
     renderCompareTable();
-  }
+  });
 
   function renderCompareTable() {
     compareTable.innerHTML = "";
@@ -188,27 +191,28 @@
     }
     clearCompareBtn.style.display = "inline-block";
 
-    let headers = `<tr><th>Attribute</th>`;
+    let headers = "<tr><th>Attribute</th>";
     compareList.forEach(id => {
-      const p = products.find(prod=>prod.id === id);
+      const p = products.find(pr => pr.id === id);
       headers += `<th>${p.name}</th>`;
     });
     headers += "</tr>";
 
-    let imagesRow = `<tr><td>Image</td>`;
-    let priceRow = `<tr><td>Price</td>`;
-    let descRow = `<tr><td>Description</td>`;
-    let ratingRow = `<tr><td>Rating</td>`;
-    let categoryRow = `<tr><td>Category</td>`;
+    let imagesRow = "<tr><td>Image</td>";
+    let priceRow = "<tr><td>Price</td>";
+    let descRow = "<tr><td>Description</td>";
+    let ratingRow = "<tr><td>Rating</td>";
+    let categoryRow = "<tr><td>Category</td>";
 
     compareList.forEach(id => {
-      const p = products.find(prod => prod.id === id);
+      const p = products.find(pr => pr.id === id);
       imagesRow += `<td><img src="images/${p.image}" alt="${p.name}" style="width:80px;"/></td>`;
       priceRow += `<td>₹${p.price.toLocaleString()}</td>`;
       descRow += `<td>${p.description}</td>`;
       ratingRow += `<td>${p.rating} ★</td>`;
       categoryRow += `<td>${p.category}</td>`;
     });
+
     imagesRow += "</tr>";
     priceRow += "</tr>";
     descRow += "</tr>";
@@ -218,14 +222,7 @@
     compareTable.innerHTML = headers + imagesRow + priceRow + descRow + ratingRow + categoryRow;
   }
 
-  // Initial render
-  document.addEventListener("DOMContentLoaded", () => {
-    updateCategoryActive();
-    renderProducts(products);
-    renderCompareTable();
-  });
-
-  // Newsletter subscription + popup modal
+  // Newsletter subscription with popup
   document.getElementById("newsletterForm").addEventListener("submit", function(e){
     e.preventDefault();
     const contactInput = document.getElementById("contactInput");
@@ -259,6 +256,11 @@
     const modal = document.getElementById("customModal");
     if(e.target === modal) modal.style.display = "none";
   };
+
+  // Load products on page load
+  window.addEventListener("DOMContentLoaded", () => {
+    loadProducts();
+  });
 </script>
 </body>
 </html>
