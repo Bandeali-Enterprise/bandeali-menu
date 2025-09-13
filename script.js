@@ -7,13 +7,13 @@ const compareTable = document.getElementById("compareTable");
 const clearCompareBtn = document.getElementById("clearCompareBtn");
 const searchInput = document.getElementById("searchInput");
 
-// Fetch products
+// Fetch products.json
 fetch("products.json")
   .then(res => res.json())
   .then(data => {
     products = data;
     renderCategories();
-    renderProducts(products);
+    filterProducts();
   });
 
 // Render categories
@@ -21,6 +21,7 @@ function renderCategories() {
   const categoriesNav = document.querySelector(".categories-nav");
   const categories = ["All", ...new Set(products.map(p => p.category))];
   categoriesNav.innerHTML = "";
+
   categories.forEach(cat => {
     const btn = document.createElement("button");
     btn.textContent = cat;
@@ -35,13 +36,15 @@ function renderCategories() {
   });
 }
 
-// Render products
+// Render product grid
 function renderProducts(productList) {
   productsContainer.innerHTML = "";
+
   if (productList.length === 0) {
     productsContainer.innerHTML = '<p style="text-align:center;color:#777;">No products found.</p>';
     return;
   }
+
   productList.forEach(prod => {
     const card = document.createElement("article");
     card.className = "product-card";
@@ -55,6 +58,8 @@ function renderProducts(productList) {
         <button class="compare-btn">${compareList.has(prod.id) ? "Remove from Compare" : "Add to Compare"}</button>
       </div>
     `;
+
+    // Compare button
     const btn = card.querySelector(".compare-btn");
     btn.addEventListener("click", () => {
       if (compareList.has(prod.id)) {
@@ -70,6 +75,7 @@ function renderProducts(productList) {
       }
       renderCompareTable();
     });
+
     productsContainer.appendChild(card);
   });
 }
@@ -77,12 +83,17 @@ function renderProducts(productList) {
 // Filter products
 function filterProducts() {
   let list = products;
+
   if (selectedCategory !== "All") {
     list = list.filter(p => p.category === selectedCategory);
   }
+
   if (searchInput.value.trim()) {
-    list = list.filter(p => p.name.toLowerCase().includes(searchInput.value.toLowerCase()));
+    list = list.filter(p =>
+      p.name.toLowerCase().includes(searchInput.value.toLowerCase())
+    );
   }
+
   renderProducts(list);
 }
 
@@ -92,27 +103,38 @@ searchInput.addEventListener("input", filterProducts);
 function renderCompareTable() {
   compareTable.innerHTML = "";
   if (compareList.size === 0) return;
+
   const selectedProducts = products.filter(p => compareList.has(p.id));
-  const headers = ["Name", "Price", "Description", "Rating"];
+  const headers = ["Feature", ...selectedProducts.map(p => p.name)];
+
+  // Header row
   const thead = document.createElement("thead");
   const headerRow = document.createElement("tr");
-  headerRow.innerHTML = `<th>Feature</th>` + selectedProducts.map(p => `<th>${p.name}</th>`).join("");
+  headers.forEach(h => {
+    const th = document.createElement("th");
+    th.textContent = h;
+    headerRow.appendChild(th);
+  });
   thead.appendChild(headerRow);
   compareTable.appendChild(thead);
 
+  // Body rows
   const tbody = document.createElement("tbody");
-  headers.slice(1).forEach((field, i) => {
+  const fields = ["Price", "Description", "Rating"];
+  fields.forEach(field => {
     const row = document.createElement("tr");
-    row.innerHTML = `<td>${field}</td>` + selectedProducts.map(p => {
-      if (i === 0) return `<td>₹${p.price.toLocaleString()}</td>`;
-      if (i === 1) return `<td>${p.description}</td>`;
-      if (i === 2) return `<td>${p.rating} ★</td>`;
-    }).join("");
+    row.innerHTML = `<td>${field}</td>` +
+      selectedProducts.map(p => {
+        if (field === "Price") return `<td>₹${p.price.toLocaleString()}</td>`;
+        if (field === "Description") return `<td>${p.description}</td>`;
+        if (field === "Rating") return `<td>${p.rating} ★</td>`;
+      }).join("");
     tbody.appendChild(row);
   });
   compareTable.appendChild(tbody);
 }
 
+// Clear compare
 clearCompareBtn.addEventListener("click", () => {
   compareList.clear();
   renderCompareTable();
