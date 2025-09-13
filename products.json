@@ -15,9 +15,8 @@
     "category": "Second Hand Mobiles",
     "name": "Samsung Galaxy S21 (8GB/128GB, Good condition)",
     "price": 35000,
-    "description": "Used Samsung Galaxy S21 with 8GB RAM and 128GB storage, thoroughly tested and in good condition with minor signs of usage.",
+    "description": "Used Samsung Galaxy S21 with 8GB RAM and 128GB storage, tested and in good condition with minor usage signs.",
     "image": "images/galaxys21.jpg",
-    "model": "3dmodels/galaxys21.glb",
     "stock": 10,
     "rating": 4.2
   },
@@ -26,9 +25,8 @@
     "category": "Accessories",
     "name": "Premium Shockproof Case for iPhone 13",
     "price": 1299,
-    "description": "Durable and stylish shockproof case designed specifically for iPhone 13. Provides excellent protection without adding bulk.",
+    "description": "Durable and stylish shockproof case designed specifically for iPhone 13. Provides great protection without bulk.",
     "image": "images/iphone13case.jpg",
-    "model": "",
     "stock": 100,
     "rating": 4.8
   }
