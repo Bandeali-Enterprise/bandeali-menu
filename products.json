@@ -17,6 +17,7 @@
     "price": 35000,
     "description": "Used Samsung Galaxy S21 with 8GB RAM and 128GB storage, thoroughly tested and in good condition with minor signs of usage.",
     "image": "images/galaxys21.jpg",
+    "model": "3dmodels/galaxys21.glb",
     "stock": 10,
     "rating": 4.2
   },
@@ -27,6 +28,7 @@
     "price": 1299,
     "description": "Durable and stylish shockproof case designed specifically for iPhone 13. Provides excellent protection without adding bulk.",
     "image": "images/iphone13case.jpg",
+    "model": "",
     "stock": 100,
     "rating": 4.8
   }
