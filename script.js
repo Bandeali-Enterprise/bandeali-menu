@@ -167,7 +167,6 @@ function clearCompare() {
   renderProducts(filterProducts());
   renderCompareTable();
 }
-
 clearCompareBtn.onclick = clearCompare;
 
 // Live search input event
@@ -199,7 +198,7 @@ document
 
 function showPopup(value, type) {
   const modal = document.getElementById("customModal");
-  const msg = document.getElementById("customModalMsg");
+  const msg = document.getElementById("modalDesc"); // Corrected ID here
   msg.innerHTML = `You have successfully subscribed with your <b>${type}</b>:<br>${value}`;
   modal.style.display = "flex";
 }
@@ -207,7 +206,6 @@ function showPopup(value, type) {
 document.getElementById("closeModalBtn").onclick = function () {
   document.getElementById("customModal").style.display = "none";
 };
-
 window.onclick = function (e) {
   const modal = document.getElementById("customModal");
   if (e.target === modal) modal.style.display = "none";
