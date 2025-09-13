@@ -20,10 +20,15 @@
       MOB. NO. :- 8237979782, 9155533347 &nbsp;&nbsp; MOB. NO. :- 8237979782, 9155533347 &nbsp;&nbsp;
     </span>
   </div>
-  <input type="search" id="searchInput" placeholder="Search products..." aria-label="Search products" autocomplete="off" />
+  <input type="search" id="searchInput" placeholder="Search products..." aria-label="Search products"/>
 </header>
 
-<nav id="categoriesNav" class="categories-nav" aria-label="Product categories"></nav>
+<!-- CATEGORIES NAV HTML -->
+<nav class="categories-nav" aria-label="Product categories">
+  <button>New Mobiles</button>
+  <button>Second Hand Mobiles</button>
+  <button>Accessories</button>
+</nav>
 
 <main>
   <section id="productsContainer" class="products-container" aria-live="polite"></section>
@@ -89,17 +94,17 @@
   </div>
 </footer>
 
-<!-- Custom Popup Modal -->
+<!-- Custom Popup Modal (center, only after subscribe) -->
 <div id="customModal" class="custom-modal">
   <div class="custom-modal-content">
     <span id="closeModalBtn" class="custom-modal-close">&times;</span>
-    <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Success" style="width:48px; margin-bottom:15px;">
+    <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Success" style="width:45px;margin-bottom:10px;">
     <h2>Congratulations!</h2>
     <p id="customModalMsg"></p>
   </div>
 </div>
 
-<!-- Floating Contact Buttons -->
+<!-- Floating contact buttons -->
 <div id="contactButtons">
   <a href="https://wa.me/918237979782" target="_blank" rel="noopener" aria-label="Chat on WhatsApp" class="whatsapp-btn">WhatsApp</a>
   <a href="mailto:Bandealienterprises@gmail.com" class="email-btn" aria-label="Send Email">Email Us</a>
@@ -135,14 +140,12 @@
   document.getElementById("closeModalBtn").onclick = function() {
     document.getElementById("customModal").style.display = "none";
   }
-
   window.onclick = function(e) {
-    const modal = document.getElementById("customModal");
+    var modal = document.getElementById("customModal");
     if(e.target === modal) {
       modal.style.display = "none";
     }
   }
 </script>
-
 </body>
 </html>
