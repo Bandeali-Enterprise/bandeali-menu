@@ -3,7 +3,6 @@ let products = [];
 let selectedCategory = "All";
 let compareList = new Set();
 
-// Elements
 const categoriesNav = document.querySelector(".categories-nav");
 const productsContainer = document.getElementById("productsContainer");
 const searchInput = document.getElementById("searchInput");
@@ -13,7 +12,7 @@ const clearCompareBtn = document.getElementById("clearCompareBtn");
 // Load products and initialize
 async function loadProducts() {
   try {
-    const res = await fetch("products.json"); // Make sure products.json is correctly placed
+    const res = await fetch("products.json");
     products = await res.json();
     initCategories();
     renderProducts(filterProducts());
@@ -25,7 +24,7 @@ async function loadProducts() {
   }
 }
 
-// Initialize categories
+// Initialize categories navigation
 function initCategories() {
   categoriesNav.innerHTML = "";
   const categories = ["All", ...new Set(products.map((p) => p.category))];
@@ -45,7 +44,7 @@ function initCategories() {
   });
 }
 
-// Update active category button UI
+// Update active category button style
 function updateCategoryActive() {
   const buttons = document.querySelectorAll(".categories-nav button");
   buttons.forEach((btn) =>
@@ -53,7 +52,7 @@ function updateCategoryActive() {
   );
 }
 
-// Filter products by category and search term
+// Filter products by category & search term
 function filterProducts() {
   const searchTerm = searchInput.value.trim().toLowerCase();
   let filtered =
@@ -68,8 +67,65 @@ function filterProducts() {
   return filtered;
 }
 
-// Render product cards
+// New feature: when All & search empty, horizontal scroll per category
+function renderAllCategoriesHorizontal() {
+  productsContainer.innerHTML = "";
+  const categories = [...new Set(products.map((p) => p.category))];
+  categories.forEach(category => {
+    // Category heading
+    const heading = document.createElement("h2");
+    heading.textContent = category;
+    heading.style.margin = "1em 0 0.25em 0";
+    productsContainer.appendChild(heading);
+    // Horizontal scroll row container
+    const row = document.createElement("div");
+    row.className = "horizontal-scroll-row";
+    // Products for that category
+    products
+      .filter(p => p.category === category)
+      .forEach(prod => {
+        const card = document.createElement("article");
+        card.className = "product-card";
+        card.tabIndex = 0;
+        card.style.minWidth = "250px";
+        card.style.maxWidth = "250px";
+        card.innerHTML = `
+          <img src="${prod.image}" alt="${prod.name}" class="product-image" loading="lazy" />
+          <div class="product-content">
+            <h3 class="product-name">${prod.name}</h3>
+            <p class="product-price">₹${prod.price.toLocaleString()}</p>
+            <p class="product-description">${prod.description}</p>
+            <p class="product-rating">Rating: ${prod.rating} ★</p>
+            <button class="compare-btn">${compareList.has(prod.id) ? "Remove from Compare" : "Add to Compare"}</button>
+          </div>
+        `;
+        const btn = card.querySelector(".compare-btn");
+        btn.addEventListener("click", () => {
+          if (compareList.has(prod.id)) {
+            compareList.delete(prod.id);
+            btn.textContent = "Add to Compare";
+          } else {
+            if (compareList.size >= 3) {
+              alert("You can only compare up to 3 products.");
+              return;
+            }
+            compareList.add(prod.id);
+            btn.textContent = "Remove from Compare";
+          }
+          renderCompareTable();
+        });
+        row.appendChild(card);
+      });
+    productsContainer.appendChild(row);
+  });
+}
+
+// Render products (smart switch between horizontal All & vertical others)
 function renderProducts(productList) {
+  if (selectedCategory === "All" && !searchInput.value.trim()) {
+    renderAllCategoriesHorizontal();
+    return;
+  }
   productsContainer.innerHTML = "";
   if (productList.length === 0) {
     productsContainer.innerHTML =
@@ -167,10 +223,9 @@ function clearCompare() {
   renderProducts(filterProducts());
   renderCompareTable();
 }
-
 clearCompareBtn.onclick = clearCompare;
 
-// Live search input event
+// Search input listener
 searchInput.addEventListener("input", () => {
   renderProducts(filterProducts());
   clearCompare();
