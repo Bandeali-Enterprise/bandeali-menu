@@ -3,6 +3,7 @@ let products = [];
 let selectedCategory = "All";
 let compareList = new Set();
 
+// Elements
 const categoriesNav = document.querySelector(".categories-nav");
 const productsContainer = document.getElementById("productsContainer");
 const searchInput = document.getElementById("searchInput");
@@ -12,7 +13,7 @@ const clearCompareBtn = document.getElementById("clearCompareBtn");
 // Load products and initialize
 async function loadProducts() {
   try {
-    const res = await fetch("products.json");
+    const res = await fetch("products.json"); // Make sure products.json is correctly placed
     products = await res.json();
     initCategories();
     renderProducts(filterProducts());
@@ -24,7 +25,7 @@ async function loadProducts() {
   }
 }
 
-// Initialize categories navigation
+// Initialize categories nav
 function initCategories() {
   categoriesNav.innerHTML = "";
   const categories = ["All", ...new Set(products.map((p) => p.category))];
@@ -44,7 +45,6 @@ function initCategories() {
   });
 }
 
-// Update active category button style
 function updateCategoryActive() {
   const buttons = document.querySelectorAll(".categories-nav button");
   buttons.forEach((btn) =>
@@ -52,7 +52,6 @@ function updateCategoryActive() {
   );
 }
 
-// Filter products by category & search term
 function filterProducts() {
   const searchTerm = searchInput.value.trim().toLowerCase();
   let filtered =
@@ -67,7 +66,7 @@ function filterProducts() {
   return filtered;
 }
 
-// New feature: when All & search empty, horizontal scroll per category
+// ------ NEW: Horizontal rows for "All" ---------
 function renderAllCategoriesHorizontal() {
   productsContainer.innerHTML = "";
   const categories = [...new Set(products.map((p) => p.category))];
@@ -76,10 +75,17 @@ function renderAllCategoriesHorizontal() {
     const heading = document.createElement("h2");
     heading.textContent = category;
     heading.style.margin = "1em 0 0.25em 0";
+    heading.style.fontSize = "1.17em";
+    heading.style.fontWeight = "600";
     productsContainer.appendChild(heading);
-    // Horizontal scroll row container
+
+    // Horizontal row
     const row = document.createElement("div");
     row.className = "horizontal-scroll-row";
+    row.style.display = "flex";
+    row.style.overflowX = "auto";
+    row.style.gap = "1rem";
+    row.style.paddingBottom = "1rem";
     // Products for that category
     products
       .filter(p => p.category === category)
@@ -87,8 +93,9 @@ function renderAllCategoriesHorizontal() {
         const card = document.createElement("article");
         card.className = "product-card";
         card.tabIndex = 0;
-        card.style.minWidth = "250px";
-        card.style.maxWidth = "250px";
+        card.style.minWidth = "240px";
+        card.style.maxWidth = "240px";
+        const isCompared = compareList.has(prod.id);
         card.innerHTML = `
           <img src="${prod.image}" alt="${prod.name}" class="product-image" loading="lazy" />
           <div class="product-content">
@@ -96,7 +103,7 @@ function renderAllCategoriesHorizontal() {
             <p class="product-price">₹${prod.price.toLocaleString()}</p>
             <p class="product-description">${prod.description}</p>
             <p class="product-rating">Rating: ${prod.rating} ★</p>
-            <button class="compare-btn">${compareList.has(prod.id) ? "Remove from Compare" : "Add to Compare"}</button>
+            <button class="compare-btn" aria-pressed="${isCompared}" aria-label="${isCompared ? 'Remove from Compare' : 'Add to Compare'}">${isCompared ? "Remove from Compare" : "Add to Compare"}</button>
           </div>
         `;
         const btn = card.querySelector(".compare-btn");
@@ -104,6 +111,8 @@ function renderAllCategoriesHorizontal() {
           if (compareList.has(prod.id)) {
             compareList.delete(prod.id);
             btn.textContent = "Add to Compare";
+            btn.setAttribute("aria-pressed", "false");
+            btn.setAttribute("aria-label", "Add to Compare");
           } else {
             if (compareList.size >= 3) {
               alert("You can only compare up to 3 products.");
@@ -111,6 +120,8 @@ function renderAllCategoriesHorizontal() {
             }
             compareList.add(prod.id);
             btn.textContent = "Remove from Compare";
+            btn.setAttribute("aria-pressed", "true");
+            btn.setAttribute("aria-label", "Remove from Compare");
           }
           renderCompareTable();
         });
@@ -120,12 +131,14 @@ function renderAllCategoriesHorizontal() {
   });
 }
 
-// Render products (smart switch between horizontal All & vertical others)
+// --------- Smart renderProducts: Switches view ---------
 function renderProducts(productList) {
+  // If ALL and NO search input, do horizontal per-category rows
   if (selectedCategory === "All" && !searchInput.value.trim()) {
     renderAllCategoriesHorizontal();
     return;
   }
+  // Else: normal vertical grid
   productsContainer.innerHTML = "";
   if (productList.length === 0) {
     productsContainer.innerHTML =
@@ -170,7 +183,6 @@ function renderProducts(productList) {
   });
 }
 
-// Render comparison table
 function renderCompareTable() {
   compareTable.innerHTML = "";
   if (compareList.size === 0) {
@@ -217,7 +229,6 @@ function renderCompareTable() {
     categoryRow;
 }
 
-// Clear comparison list
 function clearCompare() {
   compareList.clear();
   renderProducts(filterProducts());
@@ -225,13 +236,12 @@ function clearCompare() {
 }
 clearCompareBtn.onclick = clearCompare;
 
-// Search input listener
 searchInput.addEventListener("input", () => {
   renderProducts(filterProducts());
   clearCompare();
 });
 
-// Newsletter subscription popup logic
+// Newsletter popup logic (aapka purana code bilkul same rakh sakte ho)
 document
   .getElementById("newsletterForm")
   .addEventListener("submit", function (e) {
@@ -251,23 +261,19 @@ document
     }
     this.reset();
   });
-
 function showPopup(value, type) {
   const modal = document.getElementById("customModal");
   const msg = document.getElementById("customModalMsg");
   msg.innerHTML = `You have successfully subscribed with your <b>${type}</b>:<br>${value}`;
   modal.style.display = "flex";
 }
-
 document.getElementById("closeModalBtn").onclick = function () {
   document.getElementById("customModal").style.display = "none";
 };
-
 window.onclick = function (e) {
   const modal = document.getElementById("customModal");
   if (e.target === modal) modal.style.display = "none";
 };
-
 window.addEventListener("DOMContentLoaded", () => {
   loadProducts();
 });
