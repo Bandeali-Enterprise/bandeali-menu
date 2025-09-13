@@ -290,14 +290,22 @@ footer {
   display: flex;
   gap: 0.5rem;
   margin-top: 0.5rem;
+  align-items: center;
 }
 .footer-newsletter input[type="text"] {
   flex: 1;
-  padding: 0.42rem 0.75rem;
-  border-radius: 20px;
-  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 30px;
+  border: 2px solid #d40000;
   outline: none;
-  font-size: 0.97rem;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  background-color: #fff;
+  color: #d40000;
+}
+.footer-newsletter input[type="text"]:focus {
+  border-color: #a00000;
+  box-shadow: 0 0 6px rgba(212, 0, 0, 0.5);
 }
 .footer-newsletter button {
   padding: 0.42rem 1rem;
