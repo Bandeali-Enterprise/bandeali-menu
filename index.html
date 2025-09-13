@@ -100,7 +100,7 @@ let compareList = new Set();
 
 async function loadProducts() {
   try {
-    const res = await fetch('data/products.json'); // Apna JSON file correct path pe rakhna!
+    const res = await fetch('products.json'); // Apna JSON file correct path pe rakhna!
     products = await res.json();
     initCategories();
     renderProducts(products);
@@ -264,3 +264,4 @@ window.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
