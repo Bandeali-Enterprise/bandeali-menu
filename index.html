@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Bandeali Enterprise Catalogue</title>
+    <title>Bandeali Enterprises Catalogue</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
     <header>
-        <div class="header-content">
+        <div class="header-row">
             <img src="Logo.png" alt="Bandeali Enterprises Logo" class="Logo" />
             <h1>
-                <span class="line1">Bandeali</span>
-                <span class="line2">Enterprises</span>
+                <span class="line1">BANDEALI</span>
+                <span class="line2">ENTERPRISES</span>
             </h1>
+        </div>
+        <div class="red-bar">
+            MOB. NO. :- 8237979782, 9155533347
         </div>
         <input
             type="search"
@@ -23,21 +26,13 @@
             autocomplete="off"
         />
     </header>
-    <nav id="categoriesNav" class="categories-nav" aria-label="Product categories">
-        <!-- Category buttons dynamically loaded here -->
-    </nav>
+    <nav id="categoriesNav" class="categories-nav" aria-label="Product categories"></nav>
     <main>
-        <section id="productsContainer" class="products-container" aria-live="polite">
-            <!-- Product cards dynamically loaded here -->
-        </section>
+        <section id="productsContainer" class="products-container" aria-live="polite"></section>
         <section id="compareSection" class="compare-section">
             <h2>Compare Products</h2>
-            <table id="compareTable" class="compare-table" aria-label="Comparison table">
-                <!-- Comparison table dynamically generated -->
-            </table>
-            <button id="clearCompareBtn" class="clear-compare-btn" type="button">
-                Clear Comparison
-            </button>
+            <table id="compareTable" class="compare-table" aria-label="Comparison table"></table>
+            <button id="clearCompareBtn" class="clear-compare-btn" type="button">Clear Comparison</button>
         </section>
     </main>
     <script src="script.js" defer></script>
