@@ -1,194 +1,218 @@
 // Global state
 let products = [];
-let categories = [];
-let selectedCategory = '';
+let selectedCategory = "All";
 let compareList = new Set();
 
-const categoriesNav = document.getElementById('categoriesNav');
-const productsContainer = document.getElementById('productsContainer');
-const searchInput = document.getElementById('searchInput');
-const compareTable = document.getElementById('compareTable');
-const clearCompareBtn = document.getElementById('clearCompareBtn');
+// Elements
+const categoriesNav = document.querySelector(".categories-nav");
+const productsContainer = document.getElementById("productsContainer");
+const searchInput = document.getElementById("searchInput");
+const compareTable = document.getElementById("compareTable");
+const clearCompareBtn = document.getElementById("clearCompareBtn");
 
-// Fetch products and initialize
-async function init() {
-    try {
-        const res = await fetch('products.json');
-        products = await res.json();
-
-        categories = [...new Set(products.map(p => p.category))];
-        if (categories.length > 0) selectedCategory = categories[0];
-
-        renderCategories();
-        renderProducts();
-        renderCompareTable();
-    } catch (error) {
-        console.error('Failed to load products:', error);
-        productsContainer.innerHTML = '<p style="text-align:center;color:#cc0000;">Failed to load products.</p>';
-    }
-}
-
-// Render categories navigation buttons
-function renderCategories() {
-    categoriesNav.innerHTML = '';
-    categories.forEach(cat => {
-        const btn = document.createElement('button');
-        btn.textContent = cat;
-        btn.classList.toggle('active', cat === selectedCategory);
-        btn.setAttribute('aria-pressed', cat === selectedCategory);
-        btn.addEventListener('click', () => {
-            selectedCategory = cat;
-            renderCategories();
-            renderProducts();
-            clearCompare();
-            searchInput.value = '';
-        });
-        categoriesNav.appendChild(btn);
-    });
-}
-
-// Render product cards based on filters
-function renderProducts() {
-    const searchTerm = searchInput.value.trim().toLowerCase();
-    let filtered = products.filter(p => p.category === selectedCategory);
-
-    if (searchTerm) {
-        filtered = filtered.filter(p => p.name.toLowerCase().includes(searchTerm));
-    }
-
-    // Clear container
-    productsContainer.innerHTML = '';
-
-    if (filtered.length === 0) {
-        productsContainer.innerHTML = '<p style="text-align:center;color:#777;">No products found.</p>';
-        return;
-    }
-
-    filtered.forEach(product => {
-        const card = document.createElement('article');
-        card.className = 'product-card';
-        card.tabIndex = 0;
-        card.innerHTML = `
-            <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy" />
-            <div class="product-content">
-                <h3 class="product-name">${product.name}</h3>
-                <p class="product-price">₹${product.price.toLocaleString('en-IN')}</p>
-                <p class="product-description">${product.description}</p>
-                <p class="product-rating">${renderStars(product.rating)}</p>
-                <button class="compare-btn" aria-pressed="false" aria-label="Add ${product.name} to compare" data-id="${product.id}">
-                    Add to Compare
-                </button>
-            </div>
-        `;
-        const compareBtn = card.querySelector('.compare-btn');
-        compareBtn.addEventListener('click', () => toggleCompare(product.id, compareBtn));
-        productsContainer.appendChild(card);
-    });
-}
-
-// Generate star rating string
-function renderStars(rating) {
-    const fullStars = Math.floor(rating);
-    const halfStar = rating - fullStars >= 0.5;
-    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-
-    let stars = '★'.repeat(fullStars);
-    if (halfStar) stars += '☆'; // Using hollow star for half (no partial star symbol in plain text)
-    stars += '☆'.repeat(emptyStars);
-    return stars;
-}
-
-// Toggle product in compare list
-function toggleCompare(productId, button) {
-    if (compareList.has(productId)) {
-        compareList.delete(productId);
-        button.textContent = 'Add to Compare';
-        button.setAttribute('aria-pressed', 'false');
-    } else {
-        compareList.add(productId);
-        button.textContent = 'Added';
-        button.setAttribute('aria-pressed', 'true');
-    }
+// Load products and initialize
+async function loadProducts() {
+  try {
+    const res = await fetch("products.json"); // Make sure products.json is correctly placed
+    products = await res.json();
+    initCategories();
+    renderProducts(filterProducts());
     renderCompareTable();
+  } catch (err) {
+    console.error("Failed to load products.json:", err);
+    productsContainer.innerHTML =
+      '<p style="text-align:center;color:#cc0000;">Failed to load products.</p>';
+  }
 }
 
-// Render the comparison table
+// Initialize categories
+function initCategories() {
+  categoriesNav.innerHTML = "";
+  const categories = ["All", ...new Set(products.map((p) => p.category))];
+  categories.forEach((cat) => {
+    const btn = document.createElement("button");
+    btn.textContent = cat;
+    btn.classList.toggle("active", cat === selectedCategory);
+    btn.setAttribute("aria-pressed", cat === selectedCategory);
+    btn.addEventListener("click", () => {
+      selectedCategory = cat;
+      updateCategoryActive();
+      renderProducts(filterProducts());
+      clearCompare();
+      searchInput.value = "";
+    });
+    categoriesNav.appendChild(btn);
+  });
+}
+
+// Update active category button UI
+function updateCategoryActive() {
+  const buttons = document.querySelectorAll(".categories-nav button");
+  buttons.forEach((btn) =>
+    btn.classList.toggle("active", btn.textContent === selectedCategory)
+  );
+}
+
+// Filter products by category and search term
+function filterProducts() {
+  const searchTerm = searchInput.value.trim().toLowerCase();
+  let filtered =
+    selectedCategory === "All"
+      ? products
+      : products.filter((p) => p.category === selectedCategory);
+  if (searchTerm) {
+    filtered = filtered.filter((p) =>
+      p.name.toLowerCase().includes(searchTerm)
+    );
+  }
+  return filtered;
+}
+
+// Render product cards
+function renderProducts(productList) {
+  productsContainer.innerHTML = "";
+  if (productList.length === 0) {
+    productsContainer.innerHTML =
+      '<p style="text-align:center;color:#777;">No products found.</p>';
+    return;
+  }
+  productList.forEach((prod) => {
+    const card = document.createElement("article");
+    card.className = "product-card";
+    card.tabIndex = 0;
+    const isCompared = compareList.has(prod.id);
+    card.innerHTML = `
+      <img src="${prod.image}" alt="${prod.name}" class="product-image" loading="lazy" />
+      <div class="product-content">
+        <h3 class="product-name">${prod.name}</h3>
+        <p class="product-price">₹${prod.price.toLocaleString()}</p>
+        <p class="product-description">${prod.description}</p>
+        <p class="product-rating">Rating: ${prod.rating} ★</p>
+        <button class="compare-btn" aria-pressed="${isCompared}" aria-label="${isCompared ? 'Remove from Compare' : 'Add to Compare'}">${isCompared ? "Remove from Compare" : "Add to Compare"}</button>
+      </div>
+    `;
+    const btn = card.querySelector(".compare-btn");
+    btn.addEventListener("click", () => {
+      if (compareList.has(prod.id)) {
+        compareList.delete(prod.id);
+        btn.textContent = "Add to Compare";
+        btn.setAttribute("aria-pressed", "false");
+        btn.setAttribute("aria-label", "Add to Compare");
+      } else {
+        if (compareList.size >= 3) {
+          alert("You can only compare up to 3 products.");
+          return;
+        }
+        compareList.add(prod.id);
+        btn.textContent = "Remove from Compare";
+        btn.setAttribute("aria-pressed", "true");
+        btn.setAttribute("aria-label", "Remove from Compare");
+      }
+      renderCompareTable();
+    });
+    productsContainer.appendChild(card);
+  });
+}
+
+// Render comparison table
 function renderCompareTable() {
-    if (compareList.size === 0) {
-        compareTable.innerHTML = `<tr><td style="text-align:center;padding:1rem;" colspan="5">No products selected for comparison.</td></tr>`;
-        return;
-    }
-
-    const compareProducts = [...compareList].map(id => products.find(p => p.id === id));
-
-    const headers = ['Name', 'Price (₹)', 'Stock', 'Rating'];
-    let html = '<thead><tr><th>Feature</th>';
-    compareProducts.forEach(p => {
-        html += `<th>${escapeHtml(p.name)}</th>`;
-    });
-    html += '</tr></thead><tbody>';
-
-    headers.forEach(feature => {
-        html += `<tr><td><strong>${feature}</strong></td>`;
-        compareProducts.forEach(p => {
-            let val = '';
-            switch (feature) {
-                case 'Name':
-                    val = escapeHtml(p.name);
-                    break;
-                case 'Price (₹)':
-                    val = p.price.toLocaleString('en-IN');
-                    break;
-                case 'Stock':
-                    val = p.stock != null ? p.stock : 'N/A';
-                    break;
-                case 'Rating':
-                    val = renderStars(p.rating);
-                    break;
-            }
-            html += `<td>${val}</td>`;
-        });
-        html += '</tr>';
-    });
-
-    html += '</tbody>';
-    compareTable.innerHTML = html;
+  compareTable.innerHTML = "";
+  if (compareList.size === 0) {
+    compareTable.innerHTML =
+      '<tr><td colspan="6" style="text-align:center;padding:1rem;">No products selected for comparison.</td></tr>';
+    clearCompareBtn.style.display = "none";
+    return;
+  }
+  clearCompareBtn.style.display = "inline-block";
+  let headers = "<tr><th>Attribute</th>";
+  compareList.forEach((id) => {
+    const p = products.find((prod) => prod.id === id);
+    headers += `<th>${p.name}</th>`;
+  });
+  headers += "</tr>";
+  let imagesRow = "<tr><td>Image</td>";
+  let priceRow = "<tr><td>Price</td>";
+  let descRow = "<tr><td>Description</td>";
+  let ratingRow = "<tr><td>Rating</td>";
+  let stockRow = "<tr><td>Stock</td>";
+  let categoryRow = "<tr><td>Category</td>";
+  compareList.forEach((id) => {
+    const p = products.find((prod) => prod.id === id);
+    imagesRow += `<td><img src="${p.image}" alt="${p.name}" style="width:80px;"/></td>`;
+    priceRow += `<td>₹${p.price.toLocaleString()}</td>`;
+    descRow += `<td>${p.description}</td>`;
+    ratingRow += `<td>${p.rating} ★</td>`;
+    stockRow += `<td>${p.stock !== undefined ? p.stock : "—"}</td>`;
+    categoryRow += `<td>${p.category}</td>`;
+  });
+  imagesRow += "</tr>";
+  priceRow += "</tr>";
+  descRow += "</tr>";
+  ratingRow += "</tr>";
+  stockRow += "</tr>";
+  categoryRow += "</tr>";
+  compareTable.innerHTML =
+    headers +
+    imagesRow +
+    priceRow +
+    descRow +
+    ratingRow +
+    stockRow +
+    categoryRow;
 }
 
-// Clear comparison list and update UI
+// Clear comparison list
 function clearCompare() {
-    compareList.clear();
-    renderCompareTable();
-
-    // Reset all "Add to Compare" buttons text & aria-pressed
-    document.querySelectorAll('.compare-btn').forEach(btn => {
-        btn.textContent = 'Add to Compare';
-        btn.setAttribute('aria-pressed', 'false');
-    });
+  compareList.clear();
+  renderProducts(filterProducts());
+  renderCompareTable();
 }
 
-// Utility: Escape HTML for safety
-function escapeHtml(text) {
-    return text.replace(/[&<>"']/g, function (m) {
-        return {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#39;'
-        }[m];
-    });
+clearCompareBtn.onclick = clearCompare;
+
+// Live search input event
+searchInput.addEventListener("input", () => {
+  renderProducts(filterProducts());
+  clearCompare();
+});
+
+// Newsletter subscription popup logic
+document
+  .getElementById("newsletterForm")
+  .addEventListener("submit", function (e) {
+    e.preventDefault();
+    const contactInput = document.getElementById("contactInput");
+    const value = contactInput.value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const mobileRegex = /^[6-9]\d{9}$/;
+    if (emailRegex.test(value)) {
+      showPopup(value, "email");
+    } else if (mobileRegex.test(value)) {
+      showPopup(value, "mobile number");
+    } else {
+      alert("Please enter a valid email or 10 digit mobile number.");
+      contactInput.focus();
+      return;
+    }
+    this.reset();
+  });
+
+function showPopup(value, type) {
+  const modal = document.getElementById("customModal");
+  const msg = document.getElementById("customModalMsg");
+  msg.innerHTML = `You have successfully subscribed with your <b>${type}</b>:<br>${value}`;
+  modal.style.display = "flex";
 }
 
-// Event listeners
-searchInput.addEventListener('input', () => {
-    renderProducts();
-    clearCompare();
-});
+document.getElementById("closeModalBtn").onclick = function () {
+  document.getElementById("customModal").style.display = "none";
+};
 
-clearCompareBtn.addEventListener('click', () => {
-    clearCompare();
-});
+window.onclick = function (e) {
+  const modal = document.getElementById("customModal");
+  if (e.target === modal) modal.style.display = "none";
+};
 
-// Initialize on DOM loaded
-document.addEventListener('DOMContentLoaded', init);
+window.addEventListener("DOMContentLoaded", () => {
+  loadProducts();
+});
