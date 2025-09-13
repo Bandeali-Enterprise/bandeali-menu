@@ -436,7 +436,6 @@ footer {
   margin: 0 0 10px 0;
   font-size: 1rem;
 }
-/* Responsive */
 @media (max-width: 500px) {
   .custom-modal-content {
     padding: 18px 8px;
