@@ -178,7 +178,7 @@ h1 .line2 {
   color: #f5a623;
 }
 
-/* Compare Button */
+/* Add to Compare Button */
 .compare-btn {
   background: linear-gradient(90deg, #1678c2 0%, #34d058 100%);
   color: #fff;
@@ -188,12 +188,17 @@ h1 .line2 {
   font-size: 1rem;
   padding: 0.6rem 1.3rem;
   margin-top: 0.5rem;
+  box-shadow: 0 2px 8px 0 rgba(22,120,194,0.07);
   cursor: pointer;
-  transition: background 0.22s, transform 0.18s;
+  transition: background 0.22s, transform 0.18s, color 0.22s;
+  outline: none;
+  letter-spacing: 0.5px;
 }
-.compare-btn:hover {
+.compare-btn:hover, .compare-btn:focus {
   background: linear-gradient(90deg, #2eb872 0%, #1274c5 100%);
+  color: #fff;
   transform: translateY(-2px) scale(1.035);
+  box-shadow: 0 6px 20px 0 rgba(52,208,88,0.18);
 }
 
 /* Compare section */
@@ -214,11 +219,13 @@ h1 .line2 {
 .compare-table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 0.95rem;
 }
 .compare-table th, .compare-table td {
   border: 1px solid #ddd;
-  padding: 0.5rem;
+  padding: 0.5rem 0.75rem;
   text-align: center;
+  color: #222;
 }
 .compare-table th {
   background-color: #0077cc;
@@ -234,8 +241,10 @@ h1 .line2 {
   border-radius: 25px;
   font-weight: 700;
   cursor: pointer;
+  transition: background-color 0.25s ease;
 }
-.clear-compare-btn:hover {
+.clear-compare-btn:hover,
+.clear-compare-btn:focus {
   background-color: #990000;
 }
 
@@ -245,23 +254,134 @@ footer {
   color: white;
   padding: 2rem 1rem 1rem;
   font-size: 0.9rem;
+  user-select: none;
+  position: relative;
+  z-index: 0;
 }
 .footer-container {
   max-width: 1200px;
-  margin: auto;
+  margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
   gap: 2rem;
   justify-content: space-between;
+  align-items: flex-start;
 }
 .footer-col {
   flex: 1 1 220px;
   min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
-.footer-about h3 { color: #fff; }
-.footer-about p, .footer-about a { color: #ffd3d3; }
+.footer-about h3 {
+  font-size: 1.3rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+.footer-about p,
+.footer-about strong,
+.footer-about a {
+  color: #ffd3d3;
+  margin: 0.2rem 0;
+  word-break: break-word;
+}
+.footer-social-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 0.6rem;
+}
+.footer-instagram-icon {
+  width: 30px;
+  height: 30px;
+}
+.footer-follow-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff6f6;
+  letter-spacing: 1px;
+}
+.footer-links h4,
+.footer-newsletter h4,
+.footer-payments h4 {
+  font-size: 1.1rem;
+  margin-bottom: 0.6rem;
+  color: #fff;
+}
+.footer-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.footer-links ul li + li {
+  margin-top: 0.4rem;
+}
+.footer-links ul li a {
+  color: #ffd3d3;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+.footer-links ul li a:hover,
+.footer-links ul li a:focus {
+  color: #fff;
+  text-decoration: underline;
+}
+.footer-newsletter form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  align-items: center;
+}
+.footer-newsletter input[type="text"] {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border-radius: 30px;
+  border: 2px solid #d40000;
+  outline: none;
+  font-size: 1rem;
+  background-color: #fff;
+  color: #d40000;
+}
+.footer-newsletter input[type="text"]:focus {
+  border-color: #a00000;
+  box-shadow: 0 0 6px rgba(212, 0, 0, 0.5);
+}
+.footer-newsletter button {
+  padding: 0.42rem 1rem;
+  background: #fff;
+  color: #d40000;
+  border: none;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.footer-newsletter button:hover,
+.footer-newsletter button:focus {
+  background: #ffecec;
+}
+.payment-icons {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  margin-top: 0.4rem;
+}
+.payment-icons img {
+  height: 30px;
+  width: auto;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.05));
+}
+.footer-bottom {
+  text-align: center;
+  color: #fff0e0;
+  font-size: 0.93rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ba0000;
+}
 
-/* Floating Buttons */
+/* Floating WhatsApp and Email Buttons */
 #contactButtons {
   position: fixed;
   bottom: 20px;
@@ -276,10 +396,17 @@ footer {
   color: white;
   padding: 10px 15px;
   border-radius: 25px;
-  font-weight: 700;
   text-decoration: none;
+  font-weight: 700;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
-.email-btn { background-color: #0078d4; }
+.email-btn {
+  background-color: #0078d4;
+}
+#contactButtons a:hover {
+  opacity: 0.9;
+}
 
 /* Popup Modal */
 .custom-modal {
@@ -287,23 +414,91 @@ footer {
   position: fixed;
   z-index: 99999;
   left: 0; top: 0;
-  width: 100%; height: 100%;
+  width: 100vw; height: 100vh;
   background: rgba(0,0,0,0.45);
   align-items: center;
   justify-content: center;
+  animation: fadeInBg 0.3s;
+}
+@keyframes fadeInBg {
+  from { background: rgba(0,0,0,0); }
+  to { background: rgba(0,0,0,0.45); }
 }
 .custom-modal-content {
   background: #fff;
-  padding: 20px;
+  color: #222;
+  padding: 28px 22px 16px 22px;
   border-radius: 18px;
-  max-width: 330px;
   width: 92%;
+  max-width: 330px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.19);
   text-align: center;
+  position: relative;
+  animation: popIn 0.32s cubic-bezier(.68,-0.55,.27,1.55);
+}
+@keyframes popIn {
+  0% { transform: scale(0.7); opacity: 0.4; }
+  90% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
 }
 .custom-modal-close {
   position: absolute;
-  top: 10px; right: 16px;
+  top: 10px;
+  right: 16px;
   font-size: 1.6rem;
   color: #d40000;
   cursor: pointer;
+  font-weight: bold;
+  user-select: none;
+  transition: color .18s;
+}
+.custom-modal-close:hover {
+  color: #25d366;
+}
+.custom-modal h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #25d366;
+  font-size: 1.24rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.custom-modal-content p {
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+}
+
+/* Horizontal category rows on "All" tab */
+.horizontal-scroll-row {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  scroll-behavior: smooth;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 2.2rem;
+}
+.horizontal-scroll-row::-webkit-scrollbar {
+  height: 8px;
+}
+.horizontal-scroll-row::-webkit-scrollbar-thumb {
+  background: #b6b6b6;
+  border-radius: 4px;
+}
+.horizontal-scroll-row .product-card {
+  min-width: 240px;
+  max-width: 240px;
+  flex: 0 0 240px;
+  margin-bottom: 0;
+  box-shadow: 0 2px 7px rgba(0,0,0,0.08);
+}
+.horizontal-scroll-row .product-image {
+  height: 135px;
+}
+#productsContainer h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #064273;
+  margin: 1rem 0 0.75rem 0.5rem;
 }
