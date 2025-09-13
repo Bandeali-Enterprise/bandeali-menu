@@ -1,273 +1,531 @@
-// Global state
-let products = [];
-let selectedCategory = "All";
-let compareList = new Set();
-
-const categoriesNav = document.querySelector(".categories-nav");
-const productsContainer = document.getElementById("productsContainer");
-const searchInput = document.getElementById("searchInput");
-const compareTable = document.getElementById("compareTable");
-const clearCompareBtn = document.getElementById("clearCompareBtn");
-
-// Load products and initialize
-async function loadProducts() {
-  try {
-    const res = await fetch("products.json");
-    products = await res.json();
-    initCategories();
-    renderProducts(filterProducts());
-    renderCompareTable();
-  } catch (err) {
-    console.error("Failed to load products.json:", err);
-    productsContainer.innerHTML =
-      '<p style="text-align:center;color:#cc0000;">Failed to load products.</p>';
+/* Reset & base */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+          Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  background-color: #fff;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+/* Header */
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1563a1;
+  padding: 10px 20px;
+  gap: 15px;
+}
+.logo, img.Logo {
+  height: 50px;
+  max-width: 140px;
+  object-fit: contain;
+}
+h1 {
+  margin: 0;
+  font-weight: 700;
+  color: white;
+  text-align: center;
+  line-height: 1.1;
+}
+h1 .line1,
+h1 .line2 {
+  display: block;
+  user-select: none;
+}
+/* Red scrolling bar */
+.red-bar {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  background: #d40000;
+  overflow: hidden;
+  border-bottom: 2px solid #b60000;
+  user-select: none;
+}
+.red-bar span {
+  display: inline-block;
+  white-space: nowrap;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  position: absolute;
+  will-change: transform;
+  animation: marquee 15s linear infinite;
+  padding-left: 100%;
+}
+@keyframes marquee {
+  0% { transform: translateX(0%) }
+  100% { transform: translateX(-100%) }
+}
+/* Search input */
+#searchInput {
+  display: block;
+  width: calc(100% - 40px);
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 8px 15px;
+  font-size: 1rem;
+  border-radius: 30px;
+  border: 2px solid #1563a1;
+  outline: none;
+  background: #fff;
+  color: #1563a1;
+}
+#searchInput::placeholder {
+  color: #1563a1;
+}
+/* Categories nav */
+.categories-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.2rem;
+  padding: 1rem 0.5rem;
+  background: #fff;
+  user-select: none;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+.categories-nav button {
+  background: #0077cc;
+  border: none;
+  color: white;
+  padding: 0.6rem 1.4rem;
+  font-weight: 600;
+  border-radius: 24px;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: background 0.25s, box-shadow 0.25s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  white-space: nowrap;
+}
+.categories-nav button.active,
+.categories-nav button:hover {
+  background: #005fa3;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+/* Products container */
+.products-container {
+  background: #fff;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  padding: 1rem 1rem 2rem;
+}
+.product-card {
+  background: white;
+  color: #222;
+  border-radius: 12px;
+  box-shadow: 0 2px 7px rgba(0,0,0,0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.product-card:hover,
+.product-card:focus-within {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+.product-image {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+  background-color: #f0f0f0;
+}
+.product-content {
+  padding: 0.75rem 1rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.product-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+  line-height: 1.2;
+  color: #222;
+}
+.product-price {
+  color: #0077cc;
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+.product-description {
+  font-size: 0.9rem;
+  color: #555;
+  flex-grow: 1;
+}
+.product-rating {
+  font-size: 1rem;
+  color: #f5a623;
+}
+/* Add to Compare Button */
+.compare-btn {
+  background: linear-gradient(90deg, #1678c2 0%, #34d058 100%);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  padding: 0.6rem 1.3rem;
+  margin-top: 0.5rem;
+  box-shadow: 0 2px 8px 0 rgba(22,120,194,0.07);
+  cursor: pointer;
+  transition: background 0.22s, transform 0.18s, color 0.22s;
+  outline: none;
+  letter-spacing: 0.5px;
+}
+.compare-btn:hover, .compare-btn:focus {
+  background: linear-gradient(90deg, #2eb872 0%, #1274c5 100%);
+  color: #fff;
+  transform: translateY(-2px) scale(1.035);
+  box-shadow: 0 6px 20px 0 rgba(52,208,88,0.18);
+}
+/* Compare section */
+.compare-section {
+  margin-top: 2rem;
+  background-color: white;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  overflow-x: auto;
+}
+.compare-section h2 {
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #222;
+}
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.compare-table th, .compare-table td {
+  border: 1px solid #ddd;
+  padding: 0.5rem 0.75rem;
+  text-align: center;
+  color: #222;
+}
+.compare-table th {
+  background-color: #0077cc;
+  color: white;
+}
+.clear-compare-btn {
+  display: block;
+  margin: 1rem auto 0;
+  padding: 0.5rem 1.5rem;
+  background-color: #cc0000;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+.clear-compare-btn:hover,
+.clear-compare-btn:focus {
+  background-color: #990000;
+}
+/* Footer */
+footer {
+  background: #d40000;
+  color: white;
+  padding: 2rem 1rem 1rem;
+  font-size: 0.9rem;
+  user-select: none;
+}
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.footer-col {
+  flex: 1 1 220px;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.footer-about h3 {
+  font-size: 1.3rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+.footer-about p,
+.footer-about strong,
+.footer-about a {
+  color: #ffd3d3;
+  margin: 0.2rem 0;
+  word-break: break-word;
+}
+.footer-social-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 0.6rem;
+}
+.footer-instagram-icon {
+  width: 30px;
+  height: 30px;
+  vertical-align: middle;
+}
+.footer-follow-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff6f6;
+  letter-spacing: 1px;
+}
+.footer-links h4,
+.footer-newsletter h4,
+.footer-payments h4 {
+  font-size: 1.1rem;
+  margin-bottom: 0.6rem;
+  color: #fff;
+}
+.footer-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.footer-links ul li + li {
+  margin-top: 0.4rem;
+}
+.footer-links ul li a {
+  color: #ffd3d3;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+.footer-links ul li a:hover,
+.footer-links ul li a:focus {
+  color: #fff;
+  text-decoration: underline;
+}
+.footer-newsletter form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  align-items: center;
+}
+.footer-newsletter input[type="text"] {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border-radius: 30px;
+  border: 2px solid #d40000;
+  outline: none;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  background-color: #fff;
+  color: #d40000;
+}
+.footer-newsletter input[type="text"]:focus {
+  border-color: #a00000;
+  box-shadow: 0 0 6px rgba(212, 0, 0, 0.5);
+}
+.footer-newsletter button {
+  padding: 0.42rem 1rem;
+  background: #fff;
+  color: #d40000;
+  border: none;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.footer-newsletter button:hover,
+.footer-newsletter button:focus {
+  background: #ffecec;
+}
+.payment-icons {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  margin-top: 0.4rem;
+}
+.payment-icons img {
+  height: 30px;
+  width: auto;
+  user-select: none;
+  background: none;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.05));
+}
+.footer-bottom {
+  text-align: center;
+  color: #fff0e0;
+  font-size: 0.93rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ba0000;
+}
+/* Floating WhatsApp and Email Buttons */
+#contactButtons {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+}
+#contactButtons a {
+  background-color: #25d366;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 700;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.email-btn {
+  background-color: #0078d4;
+}
+#contactButtons a:hover {
+  opacity: 0.9;
+}
+/* Popup Modal Styles */
+.custom-modal {
+  display: none;
+  position: fixed;
+  z-index: 99999;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.45);
+  align-items: center;
+  justify-content: center;
+  animation: fadeInBg 0.3s;
+}
+@keyframes fadeInBg {
+  from { background: rgba(0,0,0,0); }
+  to { background: rgba(0,0,0,0.45); }
+}
+.custom-modal-content {
+  background: #fff;
+  color: #222;
+  padding: 28px 22px 16px 22px;
+  border-radius: 18px;
+  width: 92%;
+  max-width: 330px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.19);
+  text-align: center;
+  position: relative;
+  animation: popIn 0.32s cubic-bezier(.68,-0.55,.27,1.55);
+}
+@keyframes popIn {
+  0% { transform: scale(0.7); opacity: 0.4; }
+  90% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.custom-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  font-size: 1.6rem;
+  color: #d40000;
+  cursor: pointer;
+  font-weight: bold;
+  user-select: none;
+  transition: color .18s;
+}
+.custom-modal-close:hover {
+  color: #25d366;
+}
+.custom-modal h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #25d366;
+  font-size: 1.24rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.custom-modal-content p {
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+}
+@media (max-width: 500px) {
+  .custom-modal-content {
+    padding: 18px 8px;
+    font-size: 0.97rem;
+  }
+}
+@media (max-width: 900px) {
+  .footer-container {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+  .footer-col {
+    width: 100%;
+    align-items: flex-start;
+  }
+  .footer-newsletter form {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .footer-newsletter button {
+    width: 100%;
+  }
+  .footer-social-row {
+    margin-top: 0.5rem;
+  }
+}
+@media (max-width: 599px) {
+  .footer-instagram-icon {
+    width: 26px;
+    height: 26px;
+  }
+  .footer-newsletter input[type="text"] {
+    font-size: 0.95rem;
+  }
+  .payment-icons img {
+    height: 24px;
+  }
+  .footer-col {
+    min-width: 0;
   }
 }
 
-// Initialize categories navigation
-function initCategories() {
-  categoriesNav.innerHTML = "";
-  const categories = ["All", ...new Set(products.map((p) => p.category))];
-  categories.forEach((cat) => {
-    const btn = document.createElement("button");
-    btn.textContent = cat;
-    btn.classList.toggle("active", cat === selectedCategory);
-    btn.setAttribute("aria-pressed", cat === selectedCategory);
-    btn.addEventListener("click", () => {
-      selectedCategory = cat;
-      updateCategoryActive();
-      renderProducts(filterProducts());
-      clearCompare();
-      searchInput.value = "";
-    });
-    categoriesNav.appendChild(btn);
-  });
+/* Horizontal category rows on "All" tab */
+.horizontal-scroll-row {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  scroll-behavior: smooth;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 2.2rem;
 }
-
-// Update active category button style
-function updateCategoryActive() {
-  const buttons = document.querySelectorAll(".categories-nav button");
-  buttons.forEach((btn) =>
-    btn.classList.toggle("active", btn.textContent === selectedCategory)
-  );
+.horizontal-scroll-row::-webkit-scrollbar {
+  height: 8px;
 }
-
-// Filter products by category & search term
-function filterProducts() {
-  const searchTerm = searchInput.value.trim().toLowerCase();
-  let filtered =
-    selectedCategory === "All"
-      ? products
-      : products.filter((p) => p.category === selectedCategory);
-  if (searchTerm) {
-    filtered = filtered.filter((p) =>
-      p.name.toLowerCase().includes(searchTerm)
-    );
-  }
-  return filtered;
+.horizontal-scroll-row::-webkit-scrollbar-thumb {
+  background: #b6b6b6;
+  border-radius: 4px;
 }
-
-// New feature: when All & search empty, horizontal scroll per category
-function renderAllCategoriesHorizontal() {
-  productsContainer.innerHTML = "";
-  const categories = [...new Set(products.map((p) => p.category))];
-  categories.forEach(category => {
-    // Category heading
-    const heading = document.createElement("h2");
-    heading.textContent = category;
-    heading.style.margin = "1em 0 0.25em 0";
-    productsContainer.appendChild(heading);
-    // Horizontal scroll row container
-    const row = document.createElement("div");
-    row.className = "horizontal-scroll-row";
-    // Products for that category
-    products
-      .filter(p => p.category === category)
-      .forEach(prod => {
-        const card = document.createElement("article");
-        card.className = "product-card";
-        card.tabIndex = 0;
-        card.style.minWidth = "250px";
-        card.style.maxWidth = "250px";
-        card.innerHTML = `
-          <img src="${prod.image}" alt="${prod.name}" class="product-image" loading="lazy" />
-          <div class="product-content">
-            <h3 class="product-name">${prod.name}</h3>
-            <p class="product-price">₹${prod.price.toLocaleString()}</p>
-            <p class="product-description">${prod.description}</p>
-            <p class="product-rating">Rating: ${prod.rating} ★</p>
-            <button class="compare-btn">${compareList.has(prod.id) ? "Remove from Compare" : "Add to Compare"}</button>
-          </div>
-        `;
-        const btn = card.querySelector(".compare-btn");
-        btn.addEventListener("click", () => {
-          if (compareList.has(prod.id)) {
-            compareList.delete(prod.id);
-            btn.textContent = "Add to Compare";
-          } else {
-            if (compareList.size >= 3) {
-              alert("You can only compare up to 3 products.");
-              return;
-            }
-            compareList.add(prod.id);
-            btn.textContent = "Remove from Compare";
-          }
-          renderCompareTable();
-        });
-        row.appendChild(card);
-      });
-    productsContainer.appendChild(row);
-  });
+.horizontal-scroll-row .product-card {
+  min-width: 240px;
+  max-width: 240px;
+  flex: 0 0 240px;
+  margin-bottom: 0;
+  box-shadow: 0 2px 7px rgba(0,0,0,0.08);
 }
-
-// Render products (smart switch between horizontal All & vertical others)
-function renderProducts(productList) {
-  if (selectedCategory === "All" && !searchInput.value.trim()) {
-    renderAllCategoriesHorizontal();
-    return;
-  }
-  productsContainer.innerHTML = "";
-  if (productList.length === 0) {
-    productsContainer.innerHTML =
-      '<p style="text-align:center;color:#777;">No products found.</p>';
-    return;
-  }
-  productList.forEach((prod) => {
-    const card = document.createElement("article");
-    card.className = "product-card";
-    card.tabIndex = 0;
-    const isCompared = compareList.has(prod.id);
-    card.innerHTML = `
-      <img src="${prod.image}" alt="${prod.name}" class="product-image" loading="lazy" />
-      <div class="product-content">
-        <h3 class="product-name">${prod.name}</h3>
-        <p class="product-price">₹${prod.price.toLocaleString()}</p>
-        <p class="product-description">${prod.description}</p>
-        <p class="product-rating">Rating: ${prod.rating} ★</p>
-        <button class="compare-btn" aria-pressed="${isCompared}" aria-label="${isCompared ? 'Remove from Compare' : 'Add to Compare'}">${isCompared ? "Remove from Compare" : "Add to Compare"}</button>
-      </div>
-    `;
-    const btn = card.querySelector(".compare-btn");
-    btn.addEventListener("click", () => {
-      if (compareList.has(prod.id)) {
-        compareList.delete(prod.id);
-        btn.textContent = "Add to Compare";
-        btn.setAttribute("aria-pressed", "false");
-        btn.setAttribute("aria-label", "Add to Compare");
-      } else {
-        if (compareList.size >= 3) {
-          alert("You can only compare up to 3 products.");
-          return;
-        }
-        compareList.add(prod.id);
-        btn.textContent = "Remove from Compare";
-        btn.setAttribute("aria-pressed", "true");
-        btn.setAttribute("aria-label", "Remove from Compare");
-      }
-      renderCompareTable();
-    });
-    productsContainer.appendChild(card);
-  });
+.horizontal-scroll-row .product-image {
+  height: 135px;
 }
-
-// Render comparison table
-function renderCompareTable() {
-  compareTable.innerHTML = "";
-  if (compareList.size === 0) {
-    compareTable.innerHTML =
-      '<tr><td colspan="6" style="text-align:center;padding:1rem;">No products selected for comparison.</td></tr>';
-    clearCompareBtn.style.display = "none";
-    return;
-  }
-  clearCompareBtn.style.display = "inline-block";
-  let headers = "<tr><th>Attribute</th>";
-  compareList.forEach((id) => {
-    const p = products.find((prod) => prod.id === id);
-    headers += `<th>${p.name}</th>`;
-  });
-  headers += "</tr>";
-  let imagesRow = "<tr><td>Image</td>";
-  let priceRow = "<tr><td>Price</td>";
-  let descRow = "<tr><td>Description</td>";
-  let ratingRow = "<tr><td>Rating</td>";
-  let stockRow = "<tr><td>Stock</td>";
-  let categoryRow = "<tr><td>Category</td>";
-  compareList.forEach((id) => {
-    const p = products.find((prod) => prod.id === id);
-    imagesRow += `<td><img src="${p.image}" alt="${p.name}" style="width:80px;"/></td>`;
-    priceRow += `<td>₹${p.price.toLocaleString()}</td>`;
-    descRow += `<td>${p.description}</td>`;
-    ratingRow += `<td>${p.rating} ★</td>`;
-    stockRow += `<td>${p.stock !== undefined ? p.stock : "—"}</td>`;
-    categoryRow += `<td>${p.category}</td>`;
-  });
-  imagesRow += "</tr>";
-  priceRow += "</tr>";
-  descRow += "</tr>";
-  ratingRow += "</tr>";
-  stockRow += "</tr>";
-  categoryRow += "</tr>";
-  compareTable.innerHTML =
-    headers +
-    imagesRow +
-    priceRow +
-    descRow +
-    ratingRow +
-    stockRow +
-    categoryRow;
+#productsContainer h2 {
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: #075985;
+  margin: 2rem 0 0.8rem 0.5rem;
+  letter-spacing: 1px;
 }
-
-// Clear comparison list
-function clearCompare() {
-  compareList.clear();
-  renderProducts(filterProducts());
-  renderCompareTable();
-}
-clearCompareBtn.onclick = clearCompare;
-
-// Search input listener
-searchInput.addEventListener("input", () => {
-  renderProducts(filterProducts());
-  clearCompare();
-});
-
-// Newsletter subscription popup logic
-document
-  .getElementById("newsletterForm")
-  .addEventListener("submit", function (e) {
-    e.preventDefault();
-    const contactInput = document.getElementById("contactInput");
-    const value = contactInput.value.trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const mobileRegex = /^[6-9]\d{9}$/;
-    if (emailRegex.test(value)) {
-      showPopup(value, "email");
-    } else if (mobileRegex.test(value)) {
-      showPopup(value, "mobile number");
-    } else {
-      alert("Please enter a valid email or 10 digit mobile number.");
-      contactInput.focus();
-      return;
-    }
-    this.reset();
-  });
-
-function showPopup(value, type) {
-  const modal = document.getElementById("customModal");
-  const msg = document.getElementById("customModalMsg");
-  msg.innerHTML = `You have successfully subscribed with your <b>${type}</b>:<br>${value}`;
-  modal.style.display = "flex";
-}
-
-document.getElementById("closeModalBtn").onclick = function () {
-  document.getElementById("customModal").style.display = "none";
-};
-
-window.onclick = function (e) {
-  const modal = document.getElementById("customModal");
-  if (e.target === modal) modal.style.display = "none";
-};
-
-window.addEventListener("DOMContentLoaded", () => {
-  loadProducts();
-});
