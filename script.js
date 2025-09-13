@@ -25,7 +25,7 @@ async function loadProducts() {
   }
 }
 
-// Initialize categories nav
+// Initialize categories navigation
 function initCategories() {
   categoriesNav.innerHTML = "";
   const categories = ["All", ...new Set(products.map((p) => p.category))];
@@ -45,23 +45,24 @@ function initCategories() {
   });
 }
 
+// Update active category UI
 function updateCategoryActive() {
   document.querySelectorAll(".categories-nav button").forEach(btn => {
     btn.classList.toggle("active", btn.textContent === selectedCategory);
   });
 }
 
+// Filter products by category and search term
 function filterProducts() {
   const searchTerm = searchInput.value.trim().toLowerCase();
-  let filtered = selectedCategory === "All"
-    ? products
-    : products.filter(p => p.category === selectedCategory);
+  let filtered = selectedCategory === "All" ? products : products.filter(p => p.category === selectedCategory);
   if (searchTerm) {
     filtered = filtered.filter(p => p.name.toLowerCase().includes(searchTerm));
   }
   return filtered;
 }
 
+// Render horizontal scroll rows for "All"
 function renderAllCategoriesHorizontal() {
   productsContainer.innerHTML = "";
   const categories = [...new Set(products.map(p => p.category))];
@@ -120,12 +121,12 @@ function renderAllCategoriesHorizontal() {
   });
 }
 
+// Render final product list or horizontal scroll
 function renderProducts(productList) {
   if (selectedCategory === "All" && !searchInput.value.trim()) {
     renderAllCategoriesHorizontal();
     return;
   }
-
   productsContainer.innerHTML = "";
   if (productList.length === 0) {
     productsContainer.innerHTML = '<p style="text-align:center;color:#777;">No products found.</p>';
