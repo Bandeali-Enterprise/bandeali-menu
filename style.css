@@ -10,7 +10,6 @@ body {
   flex-direction: column;
   min-height: 100vh;
 }
-
 /* Header */
 .header-row {
   display: flex;
@@ -37,7 +36,6 @@ h1 .line2 {
   display: block;
   user-select: none;
 }
-
 /* Red scrolling bar */
 .red-bar {
   position: relative;
@@ -64,7 +62,6 @@ h1 .line2 {
   0% { transform: translateX(0%) }
   100% { transform: translateX(-100%) }
 }
-
 /* Search input */
 #searchInput {
   display: block;
@@ -82,7 +79,6 @@ h1 .line2 {
 #searchInput::placeholder {
   color: #1563a1;
 }
-
 /* Categories nav */
 .categories-nav {
   display: flex;
@@ -112,7 +108,6 @@ h1 .line2 {
   background: #005fa3;
   box-shadow: 0 4px 16px rgba(0,0,0,0.08);
 }
-
 /* Products container */
 .products-container {
   background: #fff;
@@ -170,6 +165,29 @@ h1 .line2 {
   color: #f5a623;
 }
 
+/* Add to Compare Button */
+.compare-btn {
+  background: linear-gradient(90deg, #1678c2 0%, #34d058 100%);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  padding: 0.6rem 1.3rem;
+  margin-top: 0.5rem;
+  box-shadow: 0 2px 8px 0 rgba(22,120,194,0.07);
+  cursor: pointer;
+  transition: background 0.22s, transform 0.18s, color 0.22s;
+  outline: none;
+  letter-spacing: 0.5px;
+}
+.compare-btn:hover, .compare-btn:focus {
+  background: linear-gradient(90deg, #2eb872 0%, #1274c5 100%);
+  color: #fff;
+  transform: translateY(-2px) scale(1.035);
+  box-shadow: 0 6px 20px 0 rgba(52,208,88,0.18);
+}
+
 /* Compare section */
 .compare-section {
   margin-top: 2rem;
@@ -216,7 +234,6 @@ h1 .line2 {
 .clear-compare-btn:focus {
   background-color: #990000;
 }
-
 /* Footer */
 footer {
   background: #d40000;
