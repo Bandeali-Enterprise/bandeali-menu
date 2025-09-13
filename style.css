@@ -34,7 +34,6 @@ header {
     width: auto;
     object-fit: contain;
 }
-
 /* Desktop / Laptop / Tablet Layout (width >= 600px) */
 @media (min-width: 600px) {
     header {
@@ -61,7 +60,6 @@ header {
         gap: 1.25rem;
     }
 }
-
 /* Mobile Layout (width < 600px) */
 @media (max-width: 599px) {
     .header-content {
@@ -225,4 +223,55 @@ main {
 .clear-compare-btn:hover,
 .clear-compare-btn:focus {
     background-color: #990000;
+}
+
+/* Logo responsive size and positioning */
+.logo, img.Logo {
+    max-height: 48px;
+    max-width: 130px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
+
+/* Mobile screen ke liye aur chhota aur logo ke neeche text */
+@media (max-width: 599px) {
+    .logo, img.Logo {
+        max-height: 34px;
+        max-width: 90px;
+        margin-bottom: 0.16rem;
+    }
+    .header-content {
+        flex-direction: column;
+        align-items: center;
+    }
+    h1 {
+        order: 1;
+        font-size: 1.4rem;
+        text-align: center;
+        margin-left: 0;
+        user-select: none;
+    }
+}
+
+/* Desktop/tablet ke liye logo text ke saath side by side */
+@media (min-width: 600px) {
+    .header-content {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    h1 {
+        margin-left: 0.75rem;
+        order: 0;
+        font-size: 1.8rem;
+        user-select: none;
+    }
+    .logo, img.Logo {
+        height: 48px;
+        max-width: 130px;
+        order: -1;
+        margin-bottom: 0;
+    }
 }
