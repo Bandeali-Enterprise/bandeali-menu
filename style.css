@@ -12,7 +12,6 @@ body {
   display: flex;
   flex-direction: column;
 }
-
 /* Header */
 .header-row {
   display: flex;
@@ -40,7 +39,6 @@ h1 .line2 {
   display: block;
   user-select: none;
 }
-
 /* Red Scrolling Bar */
 .red-bar {
   position: relative;
@@ -67,7 +65,6 @@ h1 .line2 {
   0% { transform: translateX(0%); }
   100% { transform: translateX(-100%); }
 }
-
 /* Search input */
 #searchInput {
   display: block;
@@ -85,7 +82,6 @@ h1 .line2 {
 #searchInput::placeholder {
   color: #1563a1;
 }
-
 /* Categories nav */
 .categories-nav {
   display: flex;
@@ -117,7 +113,6 @@ h1 .line2 {
   background: #005fa3;
   box-shadow: 0 4px 16px rgba(0,0,0,0.08);
 }
-
 /* Products container */
 .products-container {
   background: #fff;
@@ -126,8 +121,8 @@ h1 .line2 {
   gap: 1rem;
   padding: 1rem 1rem 2rem;
   flex-grow: 1;
+  min-height: 300px; /* Added to fix product display on PC */
 }
-
 /* Product card */
 .product-card {
   background: white;
@@ -177,7 +172,6 @@ h1 .line2 {
   font-size: 1rem;
   color: #f5a623;
 }
-
 /* Add to Compare Button */
 .compare-btn {
   background: linear-gradient(90deg, #1678c2 0%, #34d058 100%);
@@ -200,7 +194,6 @@ h1 .line2 {
   transform: translateY(-2px) scale(1.035);
   box-shadow: 0 6px 20px 0 rgba(52,208,88,0.18);
 }
-
 /* Compare section */
 .compare-section {
   margin-top: 2rem;
@@ -247,7 +240,6 @@ h1 .line2 {
 .clear-compare-btn:focus {
   background-color: #990000;
 }
-
 /* Footer */
 footer {
   background: #d40000;
@@ -380,7 +372,6 @@ footer {
   padding-top: 1rem;
   border-top: 1px solid #ba0000;
 }
-
 /* Floating WhatsApp and Email Buttons */
 #contactButtons {
   position: fixed;
@@ -407,7 +398,6 @@ footer {
 #contactButtons a:hover {
   opacity: 0.9;
 }
-
 /* Popup Modal */
 .custom-modal {
   display: none;
@@ -467,7 +457,6 @@ footer {
   margin: 0 0 10px 0;
   font-size: 1rem;
 }
-
 /* Horizontal category rows on "All" tab */
 .horizontal-scroll-row {
   display: flex;
