@@ -1,195 +1,194 @@
-// Product data array
-const products = [
-    {
-        id: 1,
-        category: 'New Mobiles',
-        name: 'Redmi Note 12',
-        price: 13999,
-        description: 'Latest Redmi Note with AMOLED display',
-        image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=240&q=80'
-    },
-    {
-        id: 2,
-        category: 'New Mobiles',
-        name: 'Samsung Galaxy S23',
-        price: 69999,
-        description: 'Flagship Galaxy with powerful camera',
-        image: 'https://images.unsplash.com/photo-1510552776732-01acc6fd7066?auto=format&fit=crop&w=240&q=80'
-    },
-    {
-        id: 3,
-        category: 'Second Hand Mobiles',
-        name: 'iPhone 11',
-        price: 25000,
-        description: 'Certified refurbished iPhone 11',
-        image: 'https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=240&q=80'
-    },
-    {
-        id: 4,
-        category: 'Second Hand Mobiles',
-        name: 'OnePlus 7T',
-        price: 18000,
-        description: 'Used OnePlus 7T in good condition',
-        image: 'https://images.unsplash.com/photo-1565372917277-0b038ca8044d?auto=format&fit=crop&w=240&q=80'
-    },
-    {
-        id: 5,
-        category: 'Covers',
-        name: 'Silicone Cover for Redmi',
-        price: 499,
-        description: 'Shockproof silicone cover',
-        image: 'https://images.unsplash.com/photo-1585386959984-a4155221ef73?auto=format&fit=crop&w=240&q=80'
-    },
-    {
-        id: 6,
-        category: 'Accessories',
-        name: 'USB Type-C Cable',
-        price: 299,
-        description: 'Fast charging cable',
-        image: 'https://images.unsplash.com/photo-1509395062183-67c5ad6faff9?auto=format&fit=crop&w=240&q=80'
-    },
-    {
-        id: 7,
-        category: 'Accessories',
-        name: 'Wireless Earbuds',
-        price: 1299,
-        description: 'Bluetooth earbuds with good sound',
-        image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=240&q=80'
-    },
-    {
-        id: 8,
-        category: 'Coming Soon',
-        name: 'Samsung Galaxy Z Flip 5',
-        price: 120000,
-        description: 'Foldable phone, available soon',
-        image: 'https://images.unsplash.com/photo-1616432921143-9f7e3090c3d8?auto=format&fit=crop&w=240&q=80'
+// Global state
+let products = [];
+let categories = [];
+let selectedCategory = '';
+let compareList = new Set();
+
+const categoriesNav = document.getElementById('categoriesNav');
+const productsContainer = document.getElementById('productsContainer');
+const searchInput = document.getElementById('searchInput');
+const compareTable = document.getElementById('compareTable');
+const clearCompareBtn = document.getElementById('clearCompareBtn');
+
+// Fetch products and initialize
+async function init() {
+    try {
+        const res = await fetch('products.json');
+        products = await res.json();
+
+        categories = [...new Set(products.map(p => p.category))];
+        if (categories.length > 0) selectedCategory = categories[0];
+
+        renderCategories();
+        renderProducts();
+        renderCompareTable();
+    } catch (error) {
+        console.error('Failed to load products:', error);
+        productsContainer.innerHTML = '<p style="text-align:center;color:#cc0000;">Failed to load products.</p>';
     }
-];
+}
 
-const categories = ['New Mobiles', 'Second Hand Mobiles', 'Covers', 'Accessories', 'Coming Soon'];
-
-let selectedCategory = 'New Mobiles';
-let compareList = [];
-
-// DOM elements
-const productListEl = document.getElementById('productList');
-const categoriesEl = document.getElementById('categories');
-const searchInputEl = document.getElementById('searchInput');
-const compareTableEl = document.getElementById('compareTable');
-const clearCompareBtn = document.getElementById('clearCompare');
-
-// Initialize category buttons
+// Render categories navigation buttons
 function renderCategories() {
-    categoriesEl.innerHTML = '';
+    categoriesNav.innerHTML = '';
     categories.forEach(cat => {
         const btn = document.createElement('button');
         btn.textContent = cat;
         btn.classList.toggle('active', cat === selectedCategory);
+        btn.setAttribute('aria-pressed', cat === selectedCategory);
         btn.addEventListener('click', () => {
             selectedCategory = cat;
             renderCategories();
             renderProducts();
-            resetCompare();
+            clearCompare();
+            searchInput.value = '';
         });
-        categoriesEl.appendChild(btn);
+        categoriesNav.appendChild(btn);
     });
 }
 
-// Render product cards according to selected category and search
+// Render product cards based on filters
 function renderProducts() {
-    let searchTerm = searchInputEl.value.toLowerCase();
-    productListEl.innerHTML = '';
-    let filteredProducts = products.filter(p =>
-        p.category === selectedCategory && p.name.toLowerCase().includes(searchTerm)
-    );
+    const searchTerm = searchInput.value.trim().toLowerCase();
+    let filtered = products.filter(p => p.category === selectedCategory);
 
-    filteredProducts.forEach(product => {
-        const card = document.createElement('div');
+    if (searchTerm) {
+        filtered = filtered.filter(p => p.name.toLowerCase().includes(searchTerm));
+    }
+
+    // Clear container
+    productsContainer.innerHTML = '';
+
+    if (filtered.length === 0) {
+        productsContainer.innerHTML = '<p style="text-align:center;color:#777;">No products found.</p>';
+        return;
+    }
+
+    filtered.forEach(product => {
+        const card = document.createElement('article');
         card.className = 'product-card';
+        card.tabIndex = 0;
         card.innerHTML = `
-            <img src="${product.image}" alt="${product.name}" />
-            <div class="product-info">
-                <h3>${product.name}</h3>
-                <p class="price">₹${product.price.toLocaleString('en-IN')}</p>
-                <p class="description">${product.description}</p>
-                <button data-id="${product.id}">Add to Compare</button>
+            <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy" />
+            <div class="product-content">
+                <h3 class="product-name">${product.name}</h3>
+                <p class="product-price">₹${product.price.toLocaleString('en-IN')}</p>
+                <p class="product-description">${product.description}</p>
+                <p class="product-rating">${renderStars(product.rating)}</p>
+                <button class="compare-btn" aria-pressed="false" aria-label="Add ${product.name} to compare" data-id="${product.id}">
+                    Add to Compare
+                </button>
             </div>
         `;
-
-        const btn = card.querySelector('button');
-        btn.addEventListener('click', () => {
-            addToCompare(product.id);
-        });
-
-        productListEl.appendChild(card);
+        const compareBtn = card.querySelector('.compare-btn');
+        compareBtn.addEventListener('click', () => toggleCompare(product.id, compareBtn));
+        productsContainer.appendChild(card);
     });
 }
 
-// Add product to compare list
-function addToCompare(productId) {
-    if (!compareList.includes(productId)) {
-        compareList.push(productId);
-        renderCompareTable();
+// Generate star rating string
+function renderStars(rating) {
+    const fullStars = Math.floor(rating);
+    const halfStar = rating - fullStars >= 0.5;
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+    let stars = '★'.repeat(fullStars);
+    if (halfStar) stars += '☆'; // Using hollow star for half (no partial star symbol in plain text)
+    stars += '☆'.repeat(emptyStars);
+    return stars;
+}
+
+// Toggle product in compare list
+function toggleCompare(productId, button) {
+    if (compareList.has(productId)) {
+        compareList.delete(productId);
+        button.textContent = 'Add to Compare';
+        button.setAttribute('aria-pressed', 'false');
+    } else {
+        compareList.add(productId);
+        button.textContent = 'Added';
+        button.setAttribute('aria-pressed', 'true');
     }
+    renderCompareTable();
 }
 
 // Render the comparison table
 function renderCompareTable() {
-    if (compareList.length === 0) {
-        compareTableEl.innerHTML = '<tr><td>No products selected for comparison.</td></tr>';
+    if (compareList.size === 0) {
+        compareTable.innerHTML = `<tr><td style="text-align:center;padding:1rem;" colspan="5">No products selected for comparison.</td></tr>`;
         return;
     }
 
-    // Get product objects
-    const compareProducts = compareList.map(id => products.find(p => p.id === id));
+    const compareProducts = [...compareList].map(id => products.find(p => p.id === id));
 
+    const headers = ['Name', 'Price (₹)', 'Stock', 'Rating'];
     let html = '<thead><tr><th>Feature</th>';
     compareProducts.forEach(p => {
-        html += `<th>${p.name}</th>`;
+        html += `<th>${escapeHtml(p.name)}</th>`;
     });
     html += '</tr></thead><tbody>';
 
-    // Features: Image, Price, Description
-    html += '<tr><td>Image</td>';
-    compareProducts.forEach(p => {
-        html += `<td><img src="${p.image}" alt="${p.name}" style="max-width:100px;" /></td>`;
+    headers.forEach(feature => {
+        html += `<tr><td><strong>${feature}</strong></td>`;
+        compareProducts.forEach(p => {
+            let val = '';
+            switch (feature) {
+                case 'Name':
+                    val = escapeHtml(p.name);
+                    break;
+                case 'Price (₹)':
+                    val = p.price.toLocaleString('en-IN');
+                    break;
+                case 'Stock':
+                    val = p.stock != null ? p.stock : 'N/A';
+                    break;
+                case 'Rating':
+                    val = renderStars(p.rating);
+                    break;
+            }
+            html += `<td>${val}</td>`;
+        });
+        html += '</tr>';
     });
-    html += '</tr>';
-
-    html += '<tr><td>Price</td>';
-    compareProducts.forEach(p => {
-        html += `<td>₹${p.price.toLocaleString('en-IN')}</td>`;
-    });
-    html += '</tr>';
-
-    html += '<tr><td>Description</td>';
-    compareProducts.forEach(p => {
-        html += `<td>${p.description}</td>`;
-    });
-    html += '</tr>';
 
     html += '</tbody>';
-
-    compareTableEl.innerHTML = html;
+    compareTable.innerHTML = html;
 }
 
-// Clear comparison
-function resetCompare() {
-    compareList = [];
+// Clear comparison list and update UI
+function clearCompare() {
+    compareList.clear();
     renderCompareTable();
+
+    // Reset all "Add to Compare" buttons text & aria-pressed
+    document.querySelectorAll('.compare-btn').forEach(btn => {
+        btn.textContent = 'Add to Compare';
+        btn.setAttribute('aria-pressed', 'false');
+    });
+}
+
+// Utility: Escape HTML for safety
+function escapeHtml(text) {
+    return text.replace(/[&<>"']/g, function (m) {
+        return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[m];
+    });
 }
 
 // Event listeners
-searchInputEl.addEventListener('input', () => {
+searchInput.addEventListener('input', () => {
     renderProducts();
-    resetCompare();
+    clearCompare();
 });
 
 clearCompareBtn.addEventListener('click', () => {
-    resetCompare();
+    clearCompare();
 });
 
-// Initial load
-renderCategories();
-renderProducts();
-renderCompareTable();
+// Initialize on DOM loaded
+document.addEventListener('DOMContentLoaded', init);
