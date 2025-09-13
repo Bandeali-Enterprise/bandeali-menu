@@ -1,65 +1,70 @@
 *,
 *::before,
 *::after {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-    background-color: #fafafa;
-    color: #222;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  background-color: #fafafa;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 /* Header */
 .header-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #1563a1;
-    padding-top: 8px;
-    gap: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1563a1;
+  padding-top: 8px;
+  gap: 1rem;
 }
-.logo, img.Logo {
-    width: auto;
-    height: 50px;
-    max-width: 140px;
-    object-fit: contain;
-    display: block;
+.logo,
+img.Logo {
+  width: auto;
+  height: 50px;
+  max-width: 140px;
+  object-fit: contain;
+  display: block;
 }
 h1 {
-    margin: 0;
-    font-weight: 700;
-    color: white;
-    text-align: center;
-    line-height: 1.1;
+  margin: 0;
+  font-weight: 700;
+  color: white;
+  text-align: center;
+  line-height: 1.1;
 }
 h1 .line1,
 h1 .line2 {
-    display: block;
+  display: block;
 }
 .red-bar {
-    width: 100%;
-    background: #d40000;
-    color: #fff;
-    font-weight: bold;
-    font-size: 1.25rem;
-    text-align: center;
-    padding: 0.25rem 0;
-    letter-spacing: 1px;
-    white-space: nowrap;
-    overflow: hidden;
-    border-bottom: 2px solid #b60000;
+  width: 100%;
+  background: #d40000;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.25rem;
+  text-align: center;
+  padding: 0.25rem 0;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  border-bottom: 2px solid #b60000;
 }
 @media (max-width: 599px) {
-    .logo, img.Logo { height: 40px !important; max-width: 100px !important; }
-    .red-bar { font-size: 1rem; padding: 0.15rem 0; }
+  .logo,
+  img.Logo {
+    height: 40px !important;
+    max-width: 100px !important;
+  }
+  .red-bar {
+    font-size: 1rem;
+    padding: 0.15rem 0;
+  }
 }
 
-/* Rest of your existing styles: search box, categories, product cards, etc. (unchanged) */
-.categories-nav { /* ...existing styles... */ }
-.products-container { /* ...existing styles... */ }
-/* ...add the rest from your final style.css... */
+/* Existing styles for categories, products, compare sections ...etc to be added here */
