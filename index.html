@@ -17,7 +17,7 @@
   </div>
   <div class="red-bar">
     <span>
-    MOB. NO. :- 8237979782, 9155533347 &nbsp;&nbsp; MOB. NO. :- 8237979782, 9155533347 &nbsp;&nbsp;
+      MOB. NO. :- 8237979782, 9155533347 &nbsp;&nbsp; MOB. NO. :- 8237979782, 9155533347 &nbsp;&nbsp;
     </span>
   </div>
   <input type="search" id="searchInput" placeholder="Search products..." aria-label="Search products" />
@@ -47,12 +47,14 @@
       <p>
         <strong>Email:</strong> <a href="mailto:Bandealienterprises@gmail.com">Bandealienterprises@gmail.com</a>
       </p>
-      <p>Opposite paras readymade store,<br />
-         colliery road, old basti, ballarpur,<br />
-         chandrapur, maharashtra, 442701</p>
+      <p>
+        Opposite paras readymade store,<br/>
+        colliery road, old basti, ballarpur,<br/>
+        chandrapur, maharashtra, 442701
+      </p>
       <div class="footer-social-row">
         <a href="https://www.instagram.com/bandeali_enterprises" target="_blank" rel="noopener" aria-label="Instagram">
-          <img src="instagram-icon.png" alt="Instagram" class="footer-instagram-icon" />
+          <img src="instagram-icon.png" alt="Instagram" class="footer-instagram-icon"/>
         </a>
         <span class="footer-follow-text">Follow us</span>
       </div>
@@ -78,10 +80,10 @@
     <div class="footer-col footer-payments">
       <h4>Payment Methods</h4>
       <div class="payment-icons">
-        <img src="visa.png" alt="Visa" />
-        <img src="mastercard.png" alt="MasterCard" />
-        <img src="upi.svg" alt="UPI" />
-        <img src="wallet.png" alt="Wallet" />
+        <img src="visa.png" alt="Visa"/>
+        <img src="mastercard.png" alt="MasterCard"/>
+        <img src="upi.svg" alt="UPI"/>
+        <img src="wallet.png" alt="Wallet"/>
       </div>
     </div>
   </div>
@@ -107,6 +109,52 @@
 </div>
 
 <script>
+  // Sample products data array
+  const products = [
+    {
+      id: 1,
+      name: "iPhone 13 (128GB, Blue)",
+      price: 79999,
+      description: "Apple iPhone 13 with 128GB storage in stunning Blue color. Features A15 Bionic chip, dual-camera system, and Super Retina XDR display.",
+      image: "iphone13-blue.png",
+      rating: 4.5
+    },
+    {
+      id: 2,
+      name: "Samsung Galaxy S21",
+      price: 69999,
+      description: "Samsung Galaxy S21 with Dynamic AMOLED display, Exynos 2100, and triple camera setup.",
+      image: "galaxy-s21.png",
+      rating: 4.2
+    }
+  ];
+
+  // Render products on page
+  function renderProducts(products) {
+    const container = document.getElementById("productsContainer");
+    container.innerHTML = ''; 
+    products.forEach((product) => {
+      const card = document.createElement("div");
+      card.className = "product-card";
+      card.innerHTML = `
+        <img src="images/${product.image}" alt="${product.name}" class="product-image" />
+        <div class="product-content">
+          <h3 class="product-name">${product.name}</h3>
+          <p class="product-price">₹${product.price.toLocaleString()}</p>
+          <p class="product-description">${product.description}</p>
+          <p class="product-rating">Rating: ${product.rating} ★</p>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  // Initialize on DOM ready
+  document.addEventListener("DOMContentLoaded", () => {
+    renderProducts(products);
+  });
+
+  // Newsletter subscription validation & popup
   document.getElementById("newsletterForm").addEventListener("submit", function(e){
     e.preventDefault();
     const contactInput = document.getElementById("contactInput");
@@ -135,14 +183,13 @@
 
   document.getElementById("closeModalBtn").onclick = function() {
     document.getElementById("customModal").style.display = "none";
-  }
+  };
   window.onclick = function(e) {
-    var modal = document.getElementById("customModal");
+    const modal = document.getElementById("customModal");
     if(e.target === modal) {
       modal.style.display = "none";
     }
-  }
+  };
 </script>
-
 </body>
 </html>
