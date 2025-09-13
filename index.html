@@ -10,24 +10,15 @@
 <header>
   <div class="header-row">
     <img src="Logo.png" alt="Bandeali Enterprises Logo" class="Logo" />
-    <h1>
-      <span class="line1">BANDEALI</span>
-      <span class="line2">ENTERPRISES</span>
-    </h1>
+    <h1><span class="line1">BANDEALI</span><span class="line2">ENTERPRISES</span></h1>
   </div>
   <div class="red-bar">
-    <span>
-      MOB. NO. :- 8237979782, 9155533347 &nbsp;&nbsp; MOB. NO. :- 8237979782, 9155533347 &nbsp;&nbsp;
-    </span>
+    <span>MOB. NO. :- 8237979782, 9155533347 &nbsp;&nbsp; MOB. NO. :- 8237979782, 9155533347 &nbsp;&nbsp;</span>
   </div>
   <input type="search" id="searchInput" placeholder="Search products..." aria-label="Search products" />
 </header>
 
-<nav class="categories-nav" aria-label="Product categories">
-  <button>New Mobiles</button>
-  <button>Second Hand Mobiles</button>
-  <button>Accessories</button>
-</nav>
+<nav class="categories-nav" aria-label="Product categories"></nav>
 
 <main>
   <section id="productsContainer" class="products-container" aria-live="polite"></section>
@@ -44,14 +35,8 @@
       <h3>Bandeali Enterprises</h3>
       <p>Har Budget, Har Brand – Mobile Mile Yahin!</p>
       <p><strong>Contact:</strong> <a href="tel:+918237979782">8237979782</a></p>
-      <p>
-        <strong>Email:</strong> <a href="mailto:Bandealienterprises@gmail.com">Bandealienterprises@gmail.com</a>
-      </p>
-      <p>
-        Opposite paras readymade store,<br/>
-        colliery road, old basti, ballarpur,<br/>
-        chandrapur, maharashtra, 442701
-      </p>
+      <p><strong>Email:</strong> <a href="mailto:Bandealienterprises@gmail.com">Bandealienterprises@gmail.com</a></p>
+      <p>Opposite paras readymade store,<br/>colliery road, old basti, ballarpur,<br/>chandrapur, maharashtra, 442701</p>
       <div class="footer-social-row">
         <a href="https://www.instagram.com/bandeali_enterprises" target="_blank" rel="noopener" aria-label="Instagram">
           <img src="instagram-icon.png" alt="Instagram" class="footer-instagram-icon"/>
@@ -104,57 +89,143 @@
 
 <!-- Floating Contact Buttons -->
 <div id="contactButtons">
-  <a href="https://wa.me/918237979782" target="_blank" rel="noopener" aria-label="Chat on WhatsApp" class="whatsapp-btn">WhatsApp</a>
+  <a href="https://wa.me/918237979782" class="whatsapp-btn" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">WhatsApp</a>
   <a href="mailto:Bandealienterprises@gmail.com" class="email-btn" aria-label="Send Email">Email Us</a>
 </div>
 
 <script>
-  // Sample products data array
+  // Product data with categories
   const products = [
-    {
-      id: 1,
-      name: "iPhone 13 (128GB, Blue)",
-      price: 79999,
-      description: "Apple iPhone 13 with 128GB storage in stunning Blue color. Features A15 Bionic chip, dual-camera system, and Super Retina XDR display.",
-      image: "iphone13-blue.png",
-      rating: 4.5
-    },
-    {
-      id: 2,
-      name: "Samsung Galaxy S21",
-      price: 69999,
-      description: "Samsung Galaxy S21 with Dynamic AMOLED display, Exynos 2100, and triple camera setup.",
-      image: "galaxy-s21.png",
-      rating: 4.2
-    }
+    {id:1, name:"iPhone 13 (128GB, Blue)", price:79999, description:"Apple iPhone 13 with 128GB, A15 Bionic chip.", image:"iphone13-blue.png", rating:4.5, category:"New Mobiles"},
+    {id:2, name:"Samsung Galaxy S21", price:69999, description:"Samsung Galaxy S21 with Dynamic AMOLED display.", image:"galaxy-s21.png", rating:4.2, category:"New Mobiles"},
+    {id:3, name:"Used OnePlus 8T", price:29999, description:"Used OnePlus 8T, good condition.", image:"oneplus-8t.png", rating:4.0, category:"Second Hand Mobiles"},
+    {id:4, name:"Mobile Protective Case", price:499, description:"Durable mobile case.", image:"mobile-case.png", rating:4.1, category:"Accessories"}
   ];
 
-  // Render products on page
-  function renderProducts(products) {
+  let selectedCategory = "All";
+  let compareList = new Set();
+
+  // Initialize categories nav with All + unique categories
+  const categories = ["All", ...new Set(products.map(p=>p.category))];
+  const categoriesNav = document.querySelector(".categories-nav");
+  categoriesNav.innerHTML = "";
+  categories.forEach(cat => {
+    const btn = document.createElement("button");
+    btn.textContent = cat;
+    if(cat === selectedCategory) btn.classList.add("active");
+    btn.addEventListener("click", () => {
+      selectedCategory = cat;
+      updateCategoryActive();
+      renderProducts(filterProducts());
+      clearCompare();
+    });
+    categoriesNav.appendChild(btn);
+  });
+
+  function updateCategoryActive() {
+    categoriesNav.querySelectorAll("button").forEach(btn => {
+      btn.classList.toggle("active", btn.textContent === selectedCategory);
+    });
+  }
+
+  function filterProducts() {
+    if (selectedCategory === "All") return products;
+    return products.filter(p=>p.category === selectedCategory);
+  }
+
+  function renderProducts(productList) {
     const container = document.getElementById("productsContainer");
-    container.innerHTML = ''; 
-    products.forEach((product) => {
+    container.innerHTML = "";
+    productList.forEach(product=>{
       const card = document.createElement("div");
       card.className = "product-card";
+      const isCompared = compareList.has(product.id);
       card.innerHTML = `
-        <img src="images/${product.image}" alt="${product.name}" class="product-image" />
+        <img src="images/${product.image}" alt="${product.name}" class="product-image"/>
         <div class="product-content">
           <h3 class="product-name">${product.name}</h3>
           <p class="product-price">₹${product.price.toLocaleString()}</p>
           <p class="product-description">${product.description}</p>
           <p class="product-rating">Rating: ${product.rating} ★</p>
+          <button class="compare-btn">${isCompared ? "Remove from Compare" : "Add to Compare"}</button>
         </div>
       `;
+      const compareBtn = card.querySelector(".compare-btn");
+      compareBtn.addEventListener("click", ()=>{
+        if(compareList.has(product.id)) {
+          compareList.delete(product.id);
+          compareBtn.textContent = "Add to Compare";
+        } else {
+          if(compareList.size >= 3) {
+            alert("You can only compare up to 3 products.");
+            return;
+          }
+          compareList.add(product.id);
+          compareBtn.textContent = "Remove from Compare";
+        }
+        renderCompareTable();
+      });
       container.appendChild(card);
     });
   }
 
-  // Initialize on DOM ready
+  const compareTable = document.getElementById("compareTable");
+  const clearCompareBtn = document.getElementById("clearCompareBtn");
+  clearCompareBtn.onclick = clearCompare;
+
+  function clearCompare() {
+    compareList.clear();
+    renderProducts(filterProducts());
+    renderCompareTable();
+  }
+
+  function renderCompareTable() {
+    compareTable.innerHTML = "";
+    if(compareList.size === 0) {
+      compareTable.innerHTML = "<tr><td colspan='5'>No products selected for comparison.</td></tr>";
+      clearCompareBtn.style.display = "none";
+      return;
+    }
+    clearCompareBtn.style.display = "inline-block";
+
+    let headers = `<tr><th>Attribute</th>`;
+    compareList.forEach(id => {
+      const p = products.find(prod=>prod.id === id);
+      headers += `<th>${p.name}</th>`;
+    });
+    headers += "</tr>";
+
+    let imagesRow = `<tr><td>Image</td>`;
+    let priceRow = `<tr><td>Price</td>`;
+    let descRow = `<tr><td>Description</td>`;
+    let ratingRow = `<tr><td>Rating</td>`;
+    let categoryRow = `<tr><td>Category</td>`;
+
+    compareList.forEach(id => {
+      const p = products.find(prod => prod.id === id);
+      imagesRow += `<td><img src="images/${p.image}" alt="${p.name}" style="width:80px;"/></td>`;
+      priceRow += `<td>₹${p.price.toLocaleString()}</td>`;
+      descRow += `<td>${p.description}</td>`;
+      ratingRow += `<td>${p.rating} ★</td>`;
+      categoryRow += `<td>${p.category}</td>`;
+    });
+    imagesRow += "</tr>";
+    priceRow += "</tr>";
+    descRow += "</tr>";
+    ratingRow += "</tr>";
+    categoryRow += "</tr>";
+
+    compareTable.innerHTML = headers + imagesRow + priceRow + descRow + ratingRow + categoryRow;
+  }
+
+  // Initial render
   document.addEventListener("DOMContentLoaded", () => {
+    updateCategoryActive();
     renderProducts(products);
+    renderCompareTable();
   });
 
-  // Newsletter subscription validation & popup
+  // Newsletter subscription + popup modal
   document.getElementById("newsletterForm").addEventListener("submit", function(e){
     e.preventDefault();
     const contactInput = document.getElementById("contactInput");
@@ -186,9 +257,7 @@
   };
   window.onclick = function(e) {
     const modal = document.getElementById("customModal");
-    if(e.target === modal) {
-      modal.style.display = "none";
-    }
+    if(e.target === modal) modal.style.display = "none";
   };
 </script>
 </body>
