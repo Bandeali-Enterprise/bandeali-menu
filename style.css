@@ -97,7 +97,7 @@ h1 .line2 {
   user-select: none;
   box-shadow: 0 1px 6px rgba(0,0,0,0.06);
   position: relative;
-  z-index: 1; /* keep above products */
+  z-index: 1;
 }
 .categories-nav button {
   background: #0077cc;
@@ -125,7 +125,7 @@ h1 .line2 {
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 1rem;
   padding: 1rem 1rem 2rem;
-  flex-grow: 1; /* grow to fill vertical space */
+  flex-grow: 1;
 }
 
 /* Product card */
@@ -177,6 +177,7 @@ h1 .line2 {
   font-size: 1rem;
   color: #f5a623;
 }
+
 /* Add to Compare Button */
 .compare-btn {
   background: linear-gradient(90deg, #1678c2 0%, #34d058 100%);
@@ -294,7 +295,6 @@ footer {
 .footer-instagram-icon {
   width: 30px;
   height: 30px;
-  vertical-align: middle;
 }
 .footer-follow-text {
   font-size: 1rem;
@@ -340,7 +340,6 @@ footer {
   border: 2px solid #d40000;
   outline: none;
   font-size: 1rem;
-  transition: border-color 0.3s ease;
   background-color: #fff;
   color: #d40000;
 }
@@ -371,8 +370,6 @@ footer {
 .payment-icons img {
   height: 30px;
   width: auto;
-  user-select: none;
-  background: none;
   filter: drop-shadow(0 1px 2px rgba(0,0,0,0.05));
 }
 .footer-bottom {
@@ -411,7 +408,7 @@ footer {
   opacity: 0.9;
 }
 
-/* Popup Modal Styles */
+/* Popup Modal */
 .custom-modal {
   display: none;
   position: fixed;
@@ -500,9 +497,8 @@ footer {
   height: 135px;
 }
 #productsContainer h2 {
-  font-size: 1.12rem;
-  font-weight: 700;
-  color: #075985;
-  margin: 2rem 0 0.8rem 0.5rem;
-  letter-spacing: 1px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #064273;
+  margin: 1rem 0 0.75rem 0.5rem;
 }
