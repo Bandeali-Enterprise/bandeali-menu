@@ -12,7 +12,6 @@ body {
   flex-direction: column;
   min-height: 100vh;
 }
-
 /* Header styles */
 .header-row {
   display: flex;
@@ -39,7 +38,6 @@ h1 .line2 {
   display: block;
   user-select: none;
 }
-
 /* Red bar full width with continuous scroll */
 .red-bar {
   position: relative;
@@ -51,7 +49,6 @@ h1 .line2 {
   user-select: none;
   padding: 0;
 }
-
 .red-bar span {
   display: inline-block;
   white-space: nowrap;
@@ -59,13 +56,11 @@ h1 .line2 {
   font-weight: bold;
   font-size: 1.1rem;
   letter-spacing: 1px;
-
   position: absolute;
   will-change: transform;
   animation: marquee 15s linear infinite;
   padding-left: 100%;
 }
-
 @keyframes marquee {
   0% {
     transform: translateX(0%);
@@ -74,7 +69,6 @@ h1 .line2 {
     transform: translateX(-100%);
   }
 }
-
 /* Search input */
 #searchInput {
   display: block;
@@ -90,7 +84,6 @@ h1 .line2 {
 #searchInput::placeholder {
   color: #999;
 }
-
 /* Categories navigation */
 .categories-nav {
   display: flex;
@@ -117,7 +110,6 @@ h1 .line2 {
 .categories-nav button:hover {
   background-color: #005fa3;
 }
-
 /* Products container */
 .products-container {
   display: grid;
@@ -125,7 +117,6 @@ h1 .line2 {
   gap: 1rem;
   padding: 1rem 1rem 2rem;
 }
-
 /* Product cards */
 .product-card {
   background-color: white;
@@ -190,7 +181,6 @@ h1 .line2 {
 .compare-btn:focus {
   background-color: #005fa3;
 }
-
 /* Compare section */
 .compare-section {
   margin-top: 2rem;
@@ -237,7 +227,6 @@ h1 .line2 {
 .clear-compare-btn:focus {
   background-color: #990000;
 }
-
 /* Footer */
 footer {
   background: #1563a1;
@@ -337,14 +326,12 @@ footer {
   border-top: 1px solid #2a4d7f;
   margin-top: 2rem;
 }
-
 /* Social icon style */
 .social-icon {
   width: 24px;
   height: 24px;
   vertical-align: middle;
 }
-
 /* Responsive */
 @media (max-width: 720px) {
   .footer-container {
@@ -364,7 +351,6 @@ footer {
     width: 100%;
   }
 }
-
 /* Responsive styles */
 @media (max-width: 599px) {
   .logo, img.Logo {
