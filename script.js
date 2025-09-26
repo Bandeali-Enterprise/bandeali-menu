@@ -114,28 +114,38 @@ function renderProducts(productList) {
   });
 }
 
-// Render comparison table
+// Render comparison table with detailed specs
 function renderCompareTable() {
   compareTable.innerHTML = "";
   if (compareList.size === 0) {
     compareTable.innerHTML =
-      '<tr><td colspan="6" style="text-align:center;padding:1rem;">No products selected for comparison.</td></tr>';
+      '<tr><td colspan="10" style="text-align:center;padding:1rem;">No products selected for comparison.</td></tr>';
     clearCompareBtn.style.display = "none";
     return;
   }
   clearCompareBtn.style.display = "inline-block";
+
   let headers = "<tr><th>Attribute</th>";
   compareList.forEach((id) => {
     const p = products.find((prod) => prod.id === id);
     headers += `<th>${p.name}</th>`;
   });
   headers += "</tr>";
+
   let imagesRow = "<tr><td>Image</td>";
   let priceRow = "<tr><td>Price</td>";
   let descRow = "<tr><td>Description</td>";
   let ratingRow = "<tr><td>Rating</td>";
   let stockRow = "<tr><td>Stock</td>";
   let categoryRow = "<tr><td>Category</td>";
+  let variantRow = "<tr><td>Variants</td>";
+  let batteryRow = "<tr><td>Battery/Charger</td>";
+  let purposeRow = "<tr><td>Purpose</td>";
+  let processorRow = "<tr><td>Processor</td>";
+  let ipRow = "<tr><td>IP Rating & Body</td>";
+  let rearCamRow = "<tr><td>Rear Camera</td>";
+  let frontCamRow = "<tr><td>Front Camera</td>";
+
   compareList.forEach((id) => {
     const p = products.find((prod) => prod.id === id);
     imagesRow += `<td><img src="${p.image}" alt="${p.name}" style="width:80px;"/></td>`;
@@ -144,13 +154,29 @@ function renderCompareTable() {
     ratingRow += `<td>${p.rating} ★</td>`;
     stockRow += `<td>${p.stock !== undefined ? p.stock : "—"}</td>`;
     categoryRow += `<td>${p.category}</td>`;
+    variantRow += `<td>${p.variants ? p.variants.map(v => v.ram + "/" + v.storage + " " + v.color).join("<br>") : "—"}</td>`;
+    batteryRow += `<td>${p.specs?.battery || "—"}</td>`;
+    purposeRow += `<td>${p.specs?.purpose || "—"}</td>`;
+    processorRow += `<td>${p.specs?.processor || "—"}</td>`;
+    ipRow += `<td>${p.specs?.ip_rating_body || "—"}</td>`;
+    rearCamRow += `<td>${p.specs?.rear_camera || "—"}</td>`;
+    frontCamRow += `<td>${p.specs?.front_camera || "—"}</td>`;
   });
+
   imagesRow += "</tr>";
   priceRow += "</tr>";
   descRow += "</tr>";
   ratingRow += "</tr>";
   stockRow += "</tr>";
   categoryRow += "</tr>";
+  variantRow += "</tr>";
+  batteryRow += "</tr>";
+  purposeRow += "</tr>";
+  processorRow += "</tr>";
+  ipRow += "</tr>";
+  rearCamRow += "</tr>";
+  frontCamRow += "</tr>";
+
   compareTable.innerHTML =
     headers +
     imagesRow +
@@ -158,7 +184,14 @@ function renderCompareTable() {
     descRow +
     ratingRow +
     stockRow +
-    categoryRow;
+    categoryRow +
+    variantRow +
+    batteryRow +
+    purposeRow +
+    processorRow +
+    ipRow +
+    rearCamRow +
+    frontCamRow;
 }
 
 // Clear comparison list
