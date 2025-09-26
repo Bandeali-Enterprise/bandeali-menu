@@ -1,26 +1,28 @@
-{
-  "id": "p004",
-  "category": "New Mobiles",
-  "name": "OPPO F31 Pro (Desert Gold, 8GB/128GB)",
-  "price": 23999,
-  "description": "OPPO F31 Pro – 5G, 7000mAh Power, 80W SUPERVOOC Charging, Dimensity 7300 Energy, 50MP Camera, IP69 rugged body.",
-  "image": "oppof31pro-gold.jpg",
-  "model": "3dmodels/oppof31pro.glb",
-  "stock": 15,
-  "rating": 4.5,
-  "specs": {
-    "battery": "7000mAh, 80W SuperVOOC fast charging",
-    "purpose": "Gaming + Camera",
-    "processor": "MediaTek Dimensity 7300 Energy, Octa-core, Mali-G615 GPU",
-    "ip_rating_body": "IP66, IP68, IP69 (water, dust, splash proof); 360° Armour Body; Aerospace Aluminium; DT-Star D+ Glass",
-    "camera": "50MP Main (OIS) + 2MP, 4K video, 32MP selfie"
-  },
-  "variants": [
-    { "ram": "8GB", "storage": "128GB", "color": "Desert Gold" },
-    { "ram": "8GB", "storage": "256GB", "color": "Desert Gold" },
-    { "ram": "12GB", "storage": "256GB", "color": "Desert Gold" },
-    { "ram": "8GB", "storage": "128GB", "color": "Space Grey" },
-    { "ram": "8GB", "storage": "256GB", "color": "Space Grey" },
-    { "ram": "12GB", "storage": "256GB", "color": "Space Grey" }
-  ]
-}
+[
+  {
+    "id": "p004",
+    "category": "New Mobiles",
+    "name": "OPPO F31 Pro (Desert Gold, 8GB/128GB)",
+    "price": 23999,
+    "description": "OPPO F31 Pro – 5G, 7000mAh Power, 80W SUPERVOOC Charging, Dimensity 7300 Energy, 50MP Camera, IP69 rugged body.",
+    "image": "oppof31pro-gold.jpg",
+    "model": "3dmodels/oppof31pro.glb",
+    "stock": 15,
+    "rating": 4.5,
+    "specs": {
+      "battery": "7000mAh, 80W SuperVOOC fast charging",
+      "purpose": "Gaming + Camera",
+      "processor": "MediaTek Dimensity 7300 Energy, Octa-core, Mali-G615 GPU",
+      "ip_rating_body": "IP66, IP68, IP69 (water, dust, splash proof); 360° Armour Body; Aerospace Aluminium; DT-Star D+ Glass",
+      "camera": "50MP Main (OIS) + 2MP, 4K video, 32MP selfie"
+    },
+    "variants": [
+      { "ram": "8GB", "storage": "128GB", "color": "Desert Gold" },
+      { "ram": "8GB", "storage": "256GB", "color": "Desert Gold" },
+      { "ram": "12GB", "storage": "256GB", "color": "Desert Gold" },
+      { "ram": "8GB", "storage": "128GB", "color": "Space Grey" },
+      { "ram": "8GB", "storage": "256GB", "color": "Space Grey" },
+      { "ram": "12GB", "storage": "256GB", "color": "Space Grey" }
+    ]
+  }
+]
