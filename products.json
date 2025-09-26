@@ -14,7 +14,8 @@
       "purpose": "Gaming + Camera",
       "processor": "MediaTek Dimensity 7300 Energy, Octa-core, Mali-G615 GPU",
       "ip_rating_body": "IP66, IP68, IP69 (water, dust, splash proof); 360° Armour Body; Aerospace Aluminium; DT-Star D+ Glass",
-      "camera": "50MP Main (OIS) + 2MP, 4K video, 32MP selfie"
+      "rear_camera": "50MP Main (OIS) + 2MP, 4K video, EIS/OIS",
+      "front_camera": "32MP selfie, Portrait, Night, Dual-View video"
     },
     "variants": [
       { "ram": "8GB", "storage": "128GB", "color": "Desert Gold" },
