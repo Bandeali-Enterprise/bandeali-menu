@@ -1,33 +1,26 @@
-[
-  {
-    "id": "p001",
-    "category": "New Mobiles",
-    "name": "iPhone 13 (128GB, Blue)",
-    "price": 79999,
-    "description": "Apple iPhone 13 with 128GB storage in stunning Blue color. Features A15 Bionic chip, dual-camera system, and Super Retina XDR display.",
-    "image": "iphone13.jpg",
-    "model": "3dmodels/iphone13.glb",
-    "stock": 25,
-    "rating": 4.7
+{
+  "id": "p004",
+  "category": "New Mobiles",
+  "name": "OPPO F31 Pro (Desert Gold, 8GB/128GB)",
+  "price": 23999,
+  "description": "OPPO F31 Pro – 5G, 7000mAh Power, 80W SUPERVOOC Charging, Dimensity 7300 Energy, 50MP Camera, IP69 rugged body.",
+  "image": "oppof31pro-gold.jpg",
+  "model": "3dmodels/oppof31pro.glb",
+  "stock": 15,
+  "rating": 4.5,
+  "specs": {
+    "battery": "7000mAh, 80W SuperVOOC fast charging",
+    "purpose": "Gaming + Camera",
+    "processor": "MediaTek Dimensity 7300 Energy, Octa-core, Mali-G615 GPU",
+    "ip_rating_body": "IP66, IP68, IP69 (water, dust, splash proof); 360° Armour Body; Aerospace Aluminium; DT-Star D+ Glass",
+    "camera": "50MP Main (OIS) + 2MP, 4K video, 32MP selfie"
   },
-  {
-    "id": "p002",
-    "category": "Second Hand Mobiles",
-    "name": "Samsung Galaxy S21 (8GB/128GB, Good condition)",
-    "price": 35000,
-    "description": "Used Samsung Galaxy S21 with 8GB RAM and 128GB storage, tested and in good condition with minor usage signs.",
-    "image": "galaxys21.jpg",
-    "stock": 10,
-    "rating": 4.2
-  },
-  {
-    "id": "p003",
-    "category": "Accessories",
-    "name": "Premium Shockproof Case for iPhone 13",
-    "price": 1299,
-    "description": "Durable and stylish shockproof case designed specifically for iPhone 13. Provides great protection without bulk.",
-    "image": "iphone13case.jpg",
-    "stock": 100,
-    "rating": 4.8
-  }
-]
+  "variants": [
+    { "ram": "8GB", "storage": "128GB", "color": "Desert Gold" },
+    { "ram": "8GB", "storage": "256GB", "color": "Desert Gold" },
+    { "ram": "12GB", "storage": "256GB", "color": "Desert Gold" },
+    { "ram": "8GB", "storage": "128GB", "color": "Space Grey" },
+    { "ram": "8GB", "storage": "256GB", "color": "Space Grey" },
+    { "ram": "12GB", "storage": "256GB", "color": "Space Grey" }
+  ]
+}
